@@ -1,0 +1,20 @@
+araba|hiperonim:araç,taşıt|hiponim:otomobil,minibüs,kamyon|meronim:tekerlek,motor,kapı
+kedi|hiperonim:hayvan|hiponim:tekir,van kedisi|meronim:patiler,kuyruk,tüy
+banka|hiperonim:finans kurumu|hiponim:merkez bankası,katılım bankası|meronim:şube,kasa,müşteri hizmetleri
+masa|hiperonim:mobilya|hiponim:yemek masası,çalışma masası|meronim:ayak,tahta,çekmece
+insan|hiperonim:canlı,varlık|hiponim:çocuk,yetişkin,yaşlı|meronim:kol,bacak,baş
+şehir|hiperonim:yerleşim yeri|hiponim:ilçe,kasaba,köy|meronim:cadde,mahalle,park
+bilgisayar|hiperonim:elektronik cihaz|hiponim:dizüstü bilgisayar,masaüstü bilgisayar|meronim:klavye,ekran,anakart
+okul|hiperonim:eğitim kurumu|hiponim:ilkokul,lise,üniversite|meronim:sınıf,tahta,laboratuvar
+ev|hiperonim:konut|hiponim:apartman,villa,gecekondu|meronim:oda,mutfak,banyo
+kitap|hiperonim:yazılı eser|hiponim:roman,şiir kitabı,ders kitabı|meronim:sayfa,kapak,başlık
+kuş|hiperonim:hayvan|hiponim:güvercin,serçe,kartal|meronim:tüy,kanat,gaga
+ağaç|hiperonim:bitki|hiponim:meşe,çam,selvi|meronim:dallar,yaprak,kök
+telefon|hiperonim:elektronik cihaz|hiponim:akıllı telefon,sabit telefon|meronim:ekran,batarya,tuş
+göl|hiperonim:su kaynağı|hiponim:krater gölü,tuz gölü|meronim:sahil,dalga,ada
+ülke|hiperonim:devlet|hiponim:Türkiye,Almanya,Japonya|meronim:şehir,bayrak,halk
+müzik|hiperonim:sanat|hiponim:klasik müzik,rap,jazz|meronim:nota,melodi,ritim
+araba|hiperonim:araç,taşıt|hiponim:suv,sedan,spor araba|meronim:tekerlek,ayna,fren
+bilim|hiperonim:bilgi|hiponim:fizik,kimya,matematik|meronim:teori,deney,hipotez
+spor|hiperonim:aktivite|hiponim:voleybol,tenis,basketbol|meronim:top,saha,puan
+film|hiperonim:sanat eseri|hiponim:aksiyon filmi,komedi filmi|meronim:sahne,senaryo,oyuncu
