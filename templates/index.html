@@ -1,172 +1,642 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <title>Kelime Komşuluk Sorgusu</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(120deg, #e0ecff 0%, #f4fff8 100%);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-    h1 {
-      color: #2563eb;
-      text-align: center;
-      margin-top: 2.5rem;
-      font-size: 2.3rem;
-      letter-spacing: 1px;
-    }
-    form {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 2rem;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    input[type="text"], select {
-      padding: 0.7rem 1.2rem;
-      font-size: 1.1rem;
-      border: 1.5px solid #2563eb;
-      border-radius: 1.2rem;
-      outline: none;
-      transition: border-color 0.2s;
-      background: #fff;
-    }
-    input[type="text"]:focus, select:focus {
-      border-color: #16a34a;
-      box-shadow: 0 0 0 2px #bbf7d0;
-    }
-    button {
-      padding: 0.7rem 1.7rem;
-      font-size: 1.1rem;
-      background: linear-gradient(90deg, #2563eb 60%, #16a34a 100%);
-      color: #fff;
-      border: none;
-      border-radius: 1.2rem;
-      cursor: pointer;
-      box-shadow: 0 3px 14px rgba(37,99,235,0.12);
-      font-weight: 600;
-      transition: background 0.2s, transform 0.1s;
-    }
-    button:hover {
-      background: linear-gradient(90deg, #16a34a 20%, #2563eb 100%);
-      transform: translateY(-2px) scale(1.04);
-    }
-    h2 {
-      text-align: center;
-      color: #2563eb;
-      margin-top: 2.2rem;
-      font-size: 1.5rem;
-      font-weight: 500;
-    }
-    table {
-      margin: 2rem auto 0 auto;
-      min-width: 340px;
-      background: #fff;
-      border-radius: 1.2rem;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(37,99,235,0.09);
-    }
-    th, td {
-      border: none;
-      padding: 0.9rem 1.8rem;
-      text-align: center;
-    }
-    thead th {
-      background: #2563eb;
-      color: #fff;
-      font-weight: 600;
-      font-size: 1.08rem;
-    }
-    tbody tr {
-      transition: background 0.15s;
-    }
-    tbody tr:nth-child(even) {
-      background: #f2f8ff;
-    }
-    tbody tr:hover {
-      background: #bbf7d0;
-    }
-    .relations-table {
-      margin-top: 1.5rem;
-      margin-bottom: 1.5rem;
-      min-width: 340px;
-    }
-    .relations-table th {
-      background: #16a34a;
-    }
-    @media (max-width: 600px) {
-      table, th, td {
-        font-size: 0.97rem;
-        padding: 0.6rem 0.7rem;
-      }
-      h1 {
-        font-size: 1.35rem;
-      }
-      h2 {
-        font-size: 1rem;
-      }
-      form {
-        flex-direction: column;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Türkçe Semantik Arama Sistemi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/index.css') }}">
+    <style>
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .search-type-toggle {
+            display: flex;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .toggle-btn.active {
+            background: #007bff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        }
+        
+        .search-input-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 95%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: #0056b3;
+            transform: translateY(-50%) scale(1.05);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results-container {
+            margin-top: 30px;
+        }
+        
+        .result-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border-left: 5px solid #ffd700;
+        }
+        
+        .result-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .result-rank {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .similarity-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .result-content {
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        
+        .result-meta {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .no-results-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .stats-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .example-queries {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 10px;
+        }
+        
+        .example-queries h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        
+        .example-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.7);
+            color: #495057;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+        
+        .example-tag:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .relationship-section {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            color: #333;
+        }
+        
+        .relationship-type {
+            margin-bottom: 15px;
+        }
+        
+        .relationship-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+        
+        .relationship-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .relationship-word {
+            background: rgba(255,255,255,0.8);
+            color: #2d3748;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            border: 2px solid transparent;
+        }
+        
+        .relationship-word:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #4299e1;
+        }
+        
+        .no-relationships {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
-  <h1>Kelime Komşuluk Sorgusu</h1>
-  <form method="post">
-    <input type="text" name="query_word" placeholder="Kelime girin..."
-           value="{{ query_word or '' }}" required>
-    <select name="model_choice" required>
-      {% for key, val in model_options.items() %}
-        <option value="{{ key }}" {% if key == selected_model %}selected{% endif %}>
-          {{ key }}
-        </option>
-      {% endfor %}
-    </select>
-    <button type="submit">Sorgula</button>
-  </form>
-  {% if results %}
-    <h2>“{{ query_word }}” kelimesine en yakın komşular:</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Komşu Kelime</th>
-          <th>Mesafe</th>
-          <th>Örnek Cümle</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for word, dist, desc in results %}
-          <tr>
-            <td>{{ word }}</td>
-            <td>{{ "%.4f"|format(dist) }}</td>
-            <td>{{ desc }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <table class="relations-table">
-      <thead>
-        <tr>
-          <th>Hiperonim(ler)</th>
-          <th>Hiponim(ler)</th>
-          <th>Meronim(ler)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{% if hiper %}{{ hiper|join(', ') }}{% else %}-{% endif %}</td>
-          <td>{% if hipo %}{{ hipo|join(', ') }}{% else %}-{% endif %}</td>
-          <td>{% if mero %}{{ mero|join(', ') }}{% else %}-{% endif %}</td>
-        </tr>
-      </tbody>
-    </table>
-  {% elif query_word is not none %}
-    <p style="text-align:center; margin-top:2rem; color:#ff0000;">Sonuç bulunamadı veya boş sorgu.</p>
-  {% endif %}
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🎯 Türkçe Semantik Arama Sistemi</h1>
+            <p class="subtitle">🤖 BERT Turkish Model ile 1000+ Cümle ve 2000+ Kelime İçinde Akıllı Arama</p>
+        </header>
+
+        <div class="search-container">
+            <!-- İstatistikler -->
+            <div class="stats-info" id="stats">
+                📊 Sistem yükleniyor...
+            </div>
+
+            <!-- Arama Tipi Seçimi -->
+            <div class="search-type-toggle">
+                <button class="toggle-btn active" data-type="sentences">
+                    📚 Cümleler İçinde Ara
+                </button>
+                <button class="toggle-btn" data-type="words">
+                    🔤 Kelimeler İçinde Ara
+                </button>
+                <button class="toggle-btn" data-type="relationships">
+                    🔗 Kelime İlişkileri
+                </button>
+            </div>
+
+            <!-- Arama Alanı -->
+            <form onsubmit="event.preventDefault(); performSearch(); return false;">
+                <div class="search-input-container">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchQuery"
+                        placeholder="Aramak istediğiniz kelime veya cümleyi yazın..."
+                        autocomplete="off"
+                    >
+                    <button type="button" class="search-btn" onclick="performSearch()">
+                        🔍
+                    </button>
+                </div>
+            </form>
+
+            <!-- Örnek Aramalar -->
+            <div class="example-queries" id="exampleQueries">
+                <h4>💡 Örnek Aramalar:</h4>
+                <div id="sentenceExamples" style="display: block;">
+                    <span class="example-tag" onclick="setQuery('kitap')">kitap</span>
+                    <span class="example-tag" onclick="setQuery('arkadaş')">arkadaş</span>
+                    <span class="example-tag" onclick="setQuery('mutlu')">mutlu</span>
+                    <span class="example-tag" onclick="setQuery('okul')">okul</span>
+                    <span class="example-tag" onclick="setQuery('yemek yapmak')">yemek yapmak</span>
+                </div>
+                <div id="wordExamples" style="display: none;">
+                    <span class="example-tag" onclick="setQuery('ev')">ev</span>
+                    <span class="example-tag" onclick="setQuery('aile')">aile</span>
+                    <span class="example-tag" onclick="setQuery('spor')">spor</span>
+                    <span class="example-tag" onclick="setQuery('müzik')">müzik</span>
+                    <span class="example-tag" onclick="setQuery('bilim')">bilim</span>
+                </div>
+                <div id="relationshipExamples" style="display: none;">
+                    <span class="example-tag" onclick="setQuery('araba')">araba</span>
+                    <span class="example-tag" onclick="setQuery('kedi')">kedi</span>
+                    <span class="example-tag" onclick="setQuery('okul')">okul</span>
+                    <span class="example-tag" onclick="setQuery('ev')">ev</span>
+                    <span class="example-tag" onclick="setQuery('kitap')">kitap</span>
+                </div>
+            </div>
+
+            <!-- Sonuçlar -->
+            <div class="results-container" id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentSearchType = 'sentences';
+
+        // Sayfa yüklendiğinde istatistikleri al
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            
+            // Enter tuşu ile arama
+            document.getElementById('searchQuery').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        });
+
+        // İstatistikleri yükle
+        function loadStats() {
+            fetch('/stats')
+                .then(response => response.json())
+                .then(data => {
+                                    const statsDiv = document.getElementById('stats');
+                statsDiv.innerHTML = `
+                    📚 <strong>${data.sentences_count}</strong> cümle |
+                    🔤 <strong>${data.words_count}</strong> kelime |
+                    🔗 <strong>${data.relationships_count}</strong> ilişki |
+                    🤖 Model: ${data.model_loaded ? '✅ Yüklü' : '❌ Yüklenmemiş'}
+                `;
+                })
+                .catch(error => {
+                    console.error('İstatistik yükleme hatası:', error);
+                });
+        }
+
+        // Arama tipi değiştirme
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Aktif buton stilini değiştir
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Arama tipini güncelle
+                currentSearchType = this.getAttribute('data-type');
+                
+                // Placeholder'ı güncelle
+                const input = document.getElementById('searchQuery');
+                if (currentSearchType === 'sentences') {
+                    input.placeholder = 'Cümleler içinde aramak istediğiniz kelime veya ifadeyi yazın...';
+                } else if (currentSearchType === 'words') {
+                    input.placeholder = 'Kelimeler içinde aramak istediğiniz kelimeyi yazın...';
+                } else {
+                    input.placeholder = 'İlişkilerini öğrenmek istediğiniz kelimeyi yazın...';
+                }
+                
+                // Örnek aramaları güncelle
+                document.getElementById('sentenceExamples').style.display = currentSearchType === 'sentences' ? 'block' : 'none';
+                document.getElementById('wordExamples').style.display = currentSearchType === 'words' ? 'block' : 'none';
+                document.getElementById('relationshipExamples').style.display = currentSearchType === 'relationships' ? 'block' : 'none';
+                
+                // Sonuçları temizle
+                document.getElementById('results').innerHTML = '';
+            });
+        });
+
+        // Örnek sorgu seç
+        function setQuery(query) {
+            document.getElementById('searchQuery').value = query;
+            performSearch();
+        }
+
+        // Arama yap
+        function performSearch() {
+            const query = document.getElementById('searchQuery').value.trim();
+            
+            if (!query) {
+                alert('Lütfen bir arama terimi girin!');
+                return;
+            }
+
+            // Loading göster
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>🔍 "${query}" araması yapılıyor...</div>
+                </div>
+            `;
+
+            // API çağrısı
+            if (currentSearchType === 'relationships') {
+                // İlişkiler için ayrı endpoint
+                fetch(`/relationships/${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        resultsDiv.innerHTML = `
+                            <div class="no-results">
+                                <div class="no-results-icon">❌</div>
+                                <h3>Hata Oluştu</h3>
+                                <p>${data.error}</p>
+                            </div>
+                        `;
+                    } else {
+                        displayRelationships(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('İlişki arama hatası:', error);
+                    resultsDiv.innerHTML = `
+                        <div class="no-results">
+                            <div class="no-results-icon">⚠️</div>
+                            <h3>Bağlantı Hatası</h3>
+                            <p>İlişki bilgileri alınırken bir hata oluştu.</p>
+                        </div>
+                    `;
+                });
+            } else {
+                // Normal arama
+                fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        type: currentSearchType
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        resultsDiv.innerHTML = `
+                            <div class="no-results">
+                                <div class="no-results-icon">❌</div>
+                                <h3>Hata Oluştu</h3>
+                                <p>${data.error}</p>
+                            </div>
+                        `;
+                    } else {
+                        displayResults(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Arama hatası:', error);
+                    resultsDiv.innerHTML = `
+                        <div class="no-results">
+                            <div class="no-results-icon">⚠️</div>
+                            <h3>Bağlantı Hatası</h3>
+                            <p>Arama yapılırken bir hata oluştu.</p>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // Sonuçları göster
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (!data.results || data.results.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>Sonuç Bulunamadı</h3>
+                        <p>"${data.query}" için ${data.type === 'sentences' ? 'cümle' : 'kelime'} bulunamadı.</p>
+                        <p>Farklı arama terimleri deneyebilirsiniz.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let resultsHTML = `
+                <h3>🎯 "${data.query}" araması için ${data.results.length} sonuç bulundu</h3>
+            `;
+
+            data.results.forEach(result => {
+                if (data.type === 'sentences') {
+                    resultsHTML += `
+                        <div class="result-item">
+                            <div class="result-header">
+                                <span class="result-rank">${result.rank}. sıra</span>
+                                <span class="similarity-badge">%${result.similarity_percent} benzer</span>
+                            </div>
+                            <div class="result-content">
+                                📝 ${result.sentence}
+                            </div>
+                            <div class="result-meta">
+                                🔢 İndeks: ${result.index} | 🎯 Benzerlik Skoru: ${result.similarity.toFixed(4)}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultsHTML += `
+                        <div class="result-item">
+                            <div class="result-header">
+                                <span class="result-rank">${result.rank}. sıra</span>
+                                <span class="similarity-badge">%${result.similarity_percent} benzer</span>
+                            </div>
+                            <div class="result-content">
+                                🔤 <strong>${result.word}</strong>
+                            </div>
+                            <div class="result-meta">
+                                🔢 İndeks: ${result.index} | 🎯 Benzerlik Skoru: ${result.similarity.toFixed(4)}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            resultsDiv.innerHTML = resultsHTML;
+        }
+
+        // İlişkileri göster
+        function displayRelationships(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (!data.found) {
+                resultsDiv.innerHTML = `
+                    <div class="no-relationships">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>İlişki Bulunamadı</h3>
+                        <p>${data.message}</p>
+                        <p>💡 Deneyin: <strong>kitap, araba, kedi, okul, ev</strong></p>
+                    </div>
+                `;
+                return;
+            }
+
+            const relationships = data.relationships;
+            let relationshipHTML = `
+                <h3>🔗 "${data.word}" kelimesinin ilişkileri</h3>
+            `;
+
+            // Hiperonim (Üst kavram)
+            if (relationships.hiperonim && relationships.hiperonim.length > 0) {
+                relationshipHTML += `
+                    <div class="relationship-section">
+                        <div class="relationship-type">
+                            <div class="relationship-title">📈 Hiperonim (Üst Kavram)</div>
+                            <div class="relationship-words">
+                                ${relationships.hiperonim.map(word => 
+                                    `<span class="relationship-word" onclick="searchRelatedWord('${word}')">${word}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Hiponim (Alt kavram)
+            if (relationships.hiponim && relationships.hiponim.length > 0) {
+                relationshipHTML += `
+                    <div class="relationship-section">
+                        <div class="relationship-type">
+                            <div class="relationship-title">📉 Hiponim (Alt Kavram)</div>
+                            <div class="relationship-words">
+                                ${relationships.hiponim.map(word => 
+                                    `<span class="relationship-word" onclick="searchRelatedWord('${word}')">${word}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Meronim (Parça-bütün ilişkisi)
+            if (relationships.meronim && relationships.meronim.length > 0) {
+                relationshipHTML += `
+                    <div class="relationship-section">
+                        <div class="relationship-type">
+                            <div class="relationship-title">🧩 Meronim (Parça-Bütün)</div>
+                            <div class="relationship-words">
+                                ${relationships.meronim.map(word => 
+                                    `<span class="relationship-word" onclick="searchRelatedWord('${word}')">${word}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Eğer hiçbir ilişki yoksa
+            if ((!relationships.hiperonim || relationships.hiperonim.length === 0) &&
+                (!relationships.hiponim || relationships.hiponim.length === 0) &&
+                (!relationships.meronim || relationships.meronim.length === 0)) {
+                relationshipHTML += `
+                    <div class="no-relationships">
+                        <h4>Bu kelime için ilişki bilgisi bulunamadı</h4>
+                        <p>Diğer kelimeleri deneyebilirsiniz.</p>
+                    </div>
+                `;
+            }
+
+            resultsDiv.innerHTML = relationshipHTML;
+        }
+
+        // İlişkili kelimeye tıklandığında arama yap
+        function searchRelatedWord(word) {
+            document.getElementById('searchQuery').value = word;
+            performSearch();
+        }
+    </script>
 </body>
 </html>

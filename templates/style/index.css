@@ -1,0 +1,83 @@
+/* Modern Türkçe Semantik Arama Sistemi */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+    padding: 20px 0;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+    margin-top: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .title {
+        font-size: 1.8rem;
+    }
+    
+    .subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .search-container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .search-type-toggle {
+        flex-direction: column;
+    }
+    
+    .toggle-btn {
+        margin-bottom: 5px;
+    }
+    
+    .example-queries {
+        text-align: center;
+    }
+    
+    .result-item {
+        margin: 10px 0;
+        padding: 15px;
+    }
+    
+    .result-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+}

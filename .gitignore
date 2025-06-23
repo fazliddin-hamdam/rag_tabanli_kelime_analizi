@@ -48,11 +48,6 @@ env/
 ehthumbs.db
 Thumbs.db
 
-# Database files (you might want to keep some
-
-# ChromaDB data (usually regenerated)
-chroma.sqlite3
-
 # Logs
 *.log
 logs/
@@ -65,10 +60,8 @@ logs/
 .env.production.local
 
 # ML/AI related
-*.npy
 *.npz
 *.pkl
-*.pickle
 *.h5
 *.hdf5
 models/
