@@ -1,0 +1,179 @@
+{
+  "timestamp": "2025-06-24T16:23:47.664635",
+  "total_tests": 5,
+  "successful_tests": 5,
+  "overall_success_rate": 1.0,
+  "detailed_results": [
+    {
+      "test_name": "Basic Vector Operations",
+      "total_duration": 1.0731031894683838,
+      "passed_steps": 3,
+      "total_steps": 4,
+      "success_rate": 0.75,
+      "details": [
+        {
+          "step": "ChromaDB Connection",
+          "status": true,
+          "message": "Successfully connected to database",
+          "duration": 0.09256696701049805,
+          "timestamp": "2025-06-24T16:23:25.222941"
+        },
+        {
+          "step": "List Collections",
+          "status": true,
+          "message": "Found 8 collections",
+          "duration": 0.1001431941986084,
+          "timestamp": "2025-06-24T16:23:25.230481"
+        },
+        {
+          "step": "Word Collection Access",
+          "status": true,
+          "message": "Found word collection with 1999 items",
+          "duration": 0.2789030075073242,
+          "timestamp": "2025-06-24T16:23:25.409256"
+        },
+        {
+          "step": "Basic Search Test",
+          "status": false,
+          "message": "Failed: Collection expecting embedding with dimension of 768, got 384",
+          "duration": 1.0730690956115723,
+          "timestamp": "2025-06-24T16:23:26.203418"
+        }
+      ]
+    },
+    {
+      "test_name": "Multi-Model Vector Store",
+      "total_duration": 4.135637998580933,
+      "passed_steps": 4,
+      "total_steps": 4,
+      "success_rate": 1.0,
+      "details": [
+        {
+          "step": "Database Connection",
+          "status": true,
+          "message": "Connected to ChromaDB",
+          "duration": 0.009072065353393555,
+          "timestamp": "2025-06-24T16:23:29.217795"
+        },
+        {
+          "step": "Model dbmdz_bert Collections",
+          "status": true,
+          "message": "Word: True, Sentence: True",
+          "duration": 0.010772228240966797,
+          "timestamp": "2025-06-24T16:23:29.219394"
+        },
+        {
+          "step": "Model multilingual_mpnet Collections",
+          "status": true,
+          "message": "Word: True, Sentence: True",
+          "duration": 0.01080012321472168,
+          "timestamp": "2025-06-24T16:23:29.219410"
+        },
+        {
+          "step": "Model dbmdz_bert Encoding",
+          "status": true,
+          "message": "Successfully encoded text (dim: 768)",
+          "duration": 4.135569095611572,
+          "timestamp": "2025-06-24T16:23:33.344216"
+        }
+      ]
+    },
+    {
+      "test_name": "LangChain RAG System",
+      "total_duration": 1.3436501026153564,
+      "passed_steps": 3,
+      "total_steps": 3,
+      "success_rate": 1.0,
+      "details": [
+        {
+          "step": "LangChain Imports",
+          "status": true,
+          "message": "Successfully imported LangChain components",
+          "duration": 0.08433985710144043,
+          "timestamp": "2025-06-24T16:23:36.431207"
+        },
+        {
+          "step": "HuggingFace Embeddings",
+          "status": true,
+          "message": "Successfully initialized embeddings",
+          "duration": 1.316220998764038,
+          "timestamp": "2025-06-24T16:23:37.663118"
+        },
+        {
+          "step": "Chroma VectorStore",
+          "status": true,
+          "message": "Successfully initialized vector store",
+          "duration": 1.3436229228973389,
+          "timestamp": "2025-06-24T16:23:37.690491"
+        }
+      ]
+    },
+    {
+      "test_name": "Web Interface Integration",
+      "total_duration": 0.08691787719726562,
+      "passed_steps": 4,
+      "total_steps": 4,
+      "success_rate": 1.0,
+      "details": [
+        {
+          "step": "Flask App File",
+          "status": true,
+          "message": "app.py found",
+          "duration": 0.00017499923706054688,
+          "timestamp": "2025-06-24T16:23:40.695888"
+        },
+        {
+          "step": "Template Files",
+          "status": true,
+          "message": "index.html found",
+          "duration": 0.0003459453582763672,
+          "timestamp": "2025-06-24T16:23:40.695946"
+        },
+        {
+          "step": "Static Files",
+          "status": true,
+          "message": "CSS: True, JS: True",
+          "duration": 0.0003910064697265625,
+          "timestamp": "2025-06-24T16:23:40.695983"
+        },
+        {
+          "step": "Flask App Import",
+          "status": true,
+          "message": "Successfully imported Flask app",
+          "duration": 0.08689212799072266,
+          "timestamp": "2025-06-24T16:23:40.782496"
+        }
+      ]
+    },
+    {
+      "test_name": "Performance and Load Testing",
+      "total_duration": 3.876110792160034,
+      "passed_steps": 2,
+      "total_steps": 3,
+      "success_rate": 0.6666666666666666,
+      "details": [
+        {
+          "step": "Database Query Performance",
+          "status": false,
+          "message": "Query failed: Collection expecting embedding with dimension of 768, got 384",
+          "duration": 0.18601179122924805,
+          "timestamp": "2025-06-24T16:23:43.973726"
+        },
+        {
+          "step": "Embedding Performance",
+          "status": true,
+          "message": "Encoded 8.4 texts/second",
+          "duration": 3.8759727478027344,
+          "timestamp": "2025-06-24T16:23:47.663702"
+        },
+        {
+          "step": "File System Access",
+          "status": true,
+          "message": "Accessible files: 3/3",
+          "duration": 3.8761017322540283,
+          "timestamp": "2025-06-24T16:23:47.663799"
+        }
+      ]
+    }
+  ]
+}

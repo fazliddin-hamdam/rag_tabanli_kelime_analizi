@@ -1,0 +1,219 @@
+{
+  "timestamp": "2025-06-24T16:44:27.068195",
+  "total_duration": 11.261076927185059,
+  "overall_success_rate": 100.0,
+  "scenario_summary": {
+    "Kelime Arama": {
+      "total": 5,
+      "success": 5,
+      "total_time": 0.9105148315429688
+    },
+    "Cümle Arama": {
+      "total": 5,
+      "success": 5,
+      "total_time": 0.5848984718322754
+    },
+    "Model Karşılaştırma": {
+      "total": 3,
+      "success": 3,
+      "total_time": 0.44255614280700684
+    },
+    "Q&A Sistemi": {
+      "total": 5,
+      "success": 5,
+      "total_time": 1.2867052555084229
+    },
+    "İlişki Arama": {
+      "total": 5,
+      "success": 5,
+      "total_time": 0.015033960342407227
+    }
+  },
+  "detailed_results": [
+    {
+      "scenario": "Kelime Arama",
+      "test": "'teknoloji' arama",
+      "success": true,
+      "details": "5 sonuç, en iyi: %100.0",
+      "duration": 0.820734977722168,
+      "timestamp": "2025-06-24T16:44:16.627790"
+    },
+    {
+      "scenario": "Kelime Arama",
+      "test": "'eğitim' arama",
+      "success": true,
+      "details": "5 sonuç, en iyi: %100.0",
+      "duration": 0.020666122436523438,
+      "timestamp": "2025-06-24T16:44:16.648521"
+    },
+    {
+      "scenario": "Kelime Arama",
+      "test": "'bilgisayar' arama",
+      "success": true,
+      "details": "5 sonuç, en iyi: %100.0",
+      "duration": 0.025725841522216797,
+      "timestamp": "2025-06-24T16:44:16.674305"
+    },
+    {
+      "scenario": "Kelime Arama",
+      "test": "'sevgi' arama",
+      "success": true,
+      "details": "5 sonuç, en iyi: %100.0",
+      "duration": 0.021234750747680664,
+      "timestamp": "2025-06-24T16:44:16.695610"
+    },
+    {
+      "scenario": "Kelime Arama",
+      "test": "'kitap' arama",
+      "success": true,
+      "details": "5 sonuç, en iyi: %100.0",
+      "duration": 0.022153139114379883,
+      "timestamp": "2025-06-24T16:44:16.717882"
+    },
+    {
+      "scenario": "Cümle Arama",
+      "test": "'Eğitim sisteminin geliştirilme...' arama",
+      "success": true,
+      "details": "5 sonuç, ort: %82.2",
+      "duration": 0.43346095085144043,
+      "timestamp": "2025-06-24T16:44:19.156620"
+    },
+    {
+      "scenario": "Cümle Arama",
+      "test": "'Teknoloji hayatımızı kolaylaşt...' arama",
+      "success": true,
+      "details": "5 sonuç, ort: %84.3",
+      "duration": 0.05715131759643555,
+      "timestamp": "2025-06-24T16:44:19.213816"
+    },
+    {
+      "scenario": "Cümle Arama",
+      "test": "'Çevre koruma önemli...' arama",
+      "success": true,
+      "details": "5 sonuç, ort: %80.3",
+      "duration": 0.015961170196533203,
+      "timestamp": "2025-06-24T16:44:19.229819"
+    },
+    {
+      "scenario": "Cümle Arama",
+      "test": "'Bilim ve araştırma kritik rol ...' arama",
+      "success": true,
+      "details": "5 sonuç, ort: %83.4",
+      "duration": 0.056565046310424805,
+      "timestamp": "2025-06-24T16:44:19.286433"
+    },
+    {
+      "scenario": "Cümle Arama",
+      "test": "'Kitap okumak faydalı...' arama",
+      "success": true,
+      "details": "5 sonuç, ort: %84.0",
+      "duration": 0.021759986877441406,
+      "timestamp": "2025-06-24T16:44:19.308252"
+    },
+    {
+      "scenario": "Model Karşılaştırma",
+      "test": "dbmdz_bert modeli",
+      "success": true,
+      "details": "Cümle: 5 sonuç",
+      "duration": 0.06083822250366211,
+      "timestamp": "2025-06-24T16:44:21.374389"
+    },
+    {
+      "scenario": "Model Karşılaştırma",
+      "test": "turkcell_roberta modeli",
+      "success": true,
+      "details": "Cümle: 5 sonuç",
+      "duration": 0.07395815849304199,
+      "timestamp": "2025-06-24T16:44:21.448392"
+    },
+    {
+      "scenario": "Model Karşılaştırma",
+      "test": "multilingual_mpnet modeli",
+      "success": true,
+      "details": "Cümle: 5 sonuç",
+      "duration": 0.30775976181030273,
+      "timestamp": "2025-06-24T16:44:21.756192"
+    },
+    {
+      "scenario": "Q&A Sistemi",
+      "test": "'Teknoloji nedir?' sorusu",
+      "success": true,
+      "details": "Cevap: 'Bu sorunuz ile ilgili bulduğum en alakalı bilgi:\n\n...' Bağlam: 119",
+      "duration": 1.0314838886260986,
+      "timestamp": "2025-06-24T16:44:24.792895"
+    },
+    {
+      "scenario": "Q&A Sistemi",
+      "test": "'Eğitim sistemi nasıl gelişir?' sorusu",
+      "success": true,
+      "details": "Cevap: 'Bu sorunuz ile ilgili bulduğum en alakalı bilgi:\n\n...' Bağlam: 120",
+      "duration": 0.08245611190795898,
+      "timestamp": "2025-06-24T16:44:24.875405"
+    },
+    {
+      "scenario": "Q&A Sistemi",
+      "test": "'Çevre koruma neden önemli?' sorusu",
+      "success": true,
+      "details": "Cevap: 'Bu sorunuz ile ilgili bulduğum en alakalı bilgi:\n\n...' Bağlam: 126",
+      "duration": 0.07137298583984375,
+      "timestamp": "2025-06-24T16:44:24.946818"
+    },
+    {
+      "scenario": "Q&A Sistemi",
+      "test": "'Yapay zeka nasıl çalışır?' sorusu",
+      "success": true,
+      "details": "Cevap: 'Bu sorunuz ile ilgili bulduğum en alakalı bilgi:\n\n...' Bağlam: 122",
+      "duration": 0.05124998092651367,
+      "timestamp": "2025-06-24T16:44:24.998108"
+    },
+    {
+      "scenario": "Q&A Sistemi",
+      "test": "'Bilgisayar ne işe yarar?' sorusu",
+      "success": true,
+      "details": "Cevap: 'Bu sorunuz ile ilgili bulduğum en alakalı bilgi:\n\n...' Bağlam: 111",
+      "duration": 0.05014228820800781,
+      "timestamp": "2025-06-24T16:44:25.048290"
+    },
+    {
+      "scenario": "İlişki Arama",
+      "test": "'teknoloji' ilişkileri",
+      "success": true,
+      "details": "İlişki yok: \"teknoloji\" kelimesi için ilişki bulunamadı",
+      "duration": 0.004714012145996094,
+      "timestamp": "2025-06-24T16:44:27.057544"
+    },
+    {
+      "scenario": "İlişki Arama",
+      "test": "'eğitim' ilişkileri",
+      "success": true,
+      "details": "İlişki yok: \"eğitim\" kelimesi için ilişki bulunamadı",
+      "duration": 0.003949165344238281,
+      "timestamp": "2025-06-24T16:44:27.061547"
+    },
+    {
+      "scenario": "İlişki Arama",
+      "test": "'bilim' ilişkileri",
+      "success": true,
+      "details": "7 ilişki, türler: ['hiperonim', 'hiponim', 'meronim']",
+      "duration": 0.0023818016052246094,
+      "timestamp": "2025-06-24T16:44:27.063978"
+    },
+    {
+      "scenario": "İlişki Arama",
+      "test": "'sanat' ilişkileri",
+      "success": true,
+      "details": "İlişki yok: \"sanat\" kelimesi için ilişki bulunamadı",
+      "duration": 0.0020110607147216797,
+      "timestamp": "2025-06-24T16:44:27.066019"
+    },
+    {
+      "scenario": "İlişki Arama",
+      "test": "'spor' ilişkileri",
+      "success": true,
+      "details": "7 ilişki, türler: ['hiperonim', 'hiponim', 'meronim']",
+      "duration": 0.0019779205322265625,
+      "timestamp": "2025-06-24T16:44:27.068037"
+    }
+  ],
+  "version": "DÜZELTILMIŞ API FORMAT"
+}

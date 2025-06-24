@@ -199,14 +199,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.placeholder = 'Cümleler içinde aramak istediğiniz kelime veya ifadeyi yazın...';
             } else if (currentSearchType === 'words') {
                 input.placeholder = 'Kelimeler içinde aramak istediğiniz kelimeyi yazın...';
-            } else {
+            } else if (currentSearchType === 'relationships') {
                 input.placeholder = 'İlişkilerini öğrenmek istediğiniz kelimeyi yazın...';
+            } else if (currentSearchType === 'qa') {
+                input.placeholder = 'Sormak istediğiniz soruyu yazın... (örn: Annem pazardan ne aldı?)';
             }
             
             // Örnek aramaları güncelle
             document.getElementById('sentenceExamples').style.display = currentSearchType === 'sentences' ? 'block' : 'none';
             document.getElementById('wordExamples').style.display = currentSearchType === 'words' ? 'block' : 'none';
             document.getElementById('relationshipExamples').style.display = currentSearchType === 'relationships' ? 'block' : 'none';
+            document.getElementById('qaExamples').style.display = currentSearchType === 'qa' ? 'block' : 'none';
             
             // Auto search when type changes if query exists
             autoSearchOnTypeChange();
@@ -529,6 +532,48 @@ function performSearch() {
                 </div>
             `;
         });
+    } else if (currentSearchType === 'qa') {
+        // Q&A için ayrı endpoint
+        fetch('/qa', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                question: query
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                resultsDiv.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">❌</div>
+                        <h3>Hata Oluştu</h3>
+                        <p>${data.error}</p>
+                    </div>
+                `;
+            } else {
+                displayQAResults(data);
+                // Save to cache
+                saveSearchToCache(query, currentSearchType, [], data); // Q&A model independent
+                // Başarılı aramayı kaydet
+                searchHistory[currentSearchType] = {
+                    query: query,
+                    results: data
+                };
+            }
+        })
+        .catch(error => {
+            console.error('Q&A arama hatası:', error);
+            resultsDiv.innerHTML = `
+                <div class="no-results">
+                    <div class="no-results-icon">⚠️</div>
+                    <h3>Bağlantı Hatası</h3>
+                    <p>Q&A sistemi ile bağlantı kurulamadı.</p>
+                </div>
+            `;
+        });
     } else {
         // Multi-model arama
         fetch('/search', {
@@ -791,10 +836,84 @@ function searchRelatedWord(word) {
     setQuery(word);
 }
 
+// Q&A sonuçlarını göster
+function displayQAResults(data) {
+    const resultsDiv = document.getElementById('results');
+    
+    // Container'ı normal layout'a çevir
+    const container = document.querySelector('.container');
+    container.classList.remove('wide-layout');
+    
+    let resultsHTML = `
+        <div class="qa-results-container">
+            <div class="qa-header">
+                <h3>🤖 Soru-Cevap Sonucu</h3>
+                <div class="qa-method">
+                    <small>📚 ${data.method} • ${data.retrieved_documents} doküman incelendi</small>
+                </div>
+            </div>
+            
+            <div class="qa-question-section">
+                <h4 class="qa-question-label">❓ Soru:</h4>
+                <div class="qa-question">"${data.question}"</div>
+            </div>
+            
+            <div class="qa-answer-section">
+                <div class="qa-answer-header">
+                    <h4 class="qa-answer-label">💡 Cevap:</h4>
+                    <span class="qa-confidence confidence-${data.confidence}">
+                        ${data.confidence === 'orta' ? '🟡' : data.confidence === 'yüksek' ? '🟢' : '🔴'} 
+                        ${data.confidence.charAt(0).toUpperCase() + data.confidence.slice(1)} Güven
+                    </span>
+                </div>
+                <div class="qa-answer">${data.answer}</div>
+            </div>
+    `;
+    
+    // Kaynak cümleler varsa göster
+    if (data.source_sentences && data.source_sentences.length > 0) {
+        resultsHTML += `
+            <div class="qa-sources-section">
+                <h4 class="qa-sources-label">📖 Kaynak Cümleler:</h4>
+                <div class="qa-sources-list">
+        `;
+        
+        data.source_sentences.forEach((sentence, index) => {
+            const similarity = data.similarity_scores && data.similarity_scores[index] ? data.similarity_scores[index] : 70;
+            const similarityColor = getSimilarityColor(similarity);
+            
+            resultsHTML += `
+                <div class="qa-source-item">
+                    <div class="qa-source-header">
+                        <span class="qa-source-rank">#${index + 1}</span>
+                        <span class="similarity-badge" style="background-color: ${similarityColor}">
+                            ${similarity}%
+                        </span>
+                    </div>
+                    <div class="qa-source-text">"${sentence}"</div>
+                </div>
+            `;
+        });
+        
+        resultsHTML += `
+                </div>
+            </div>
+        `;
+    }
+    
+    resultsHTML += `
+        </div>
+    `;
+    
+    resultsDiv.innerHTML = resultsHTML;
+}
+
 // Arama sonuçlarını geri yükle
 function restoreSearchResults(data, query) {
     if (currentSearchType === 'relationships') {
         displayRelationships(data);
+    } else if (currentSearchType === 'qa') {
+        displayQAResults(data);
     } else {
         displayMultiModelResults(data);
     }
