@@ -2,3 +2,7 @@ flask
 chromadb
 sentence-transformers
 numpy
+langchain
+langchain-community
+langchain-chroma
+scikit-learn

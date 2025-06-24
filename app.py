@@ -1,18 +1,22 @@
 # app.py
 from flask import Flask, render_template, request, jsonify
-import numpy as np
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
 import os
+import chromadb
+from sentence_transformers import SentenceTransformer
 
 app = Flask(__name__)
 
+# ChromaDB setup
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_DIR = os.path.join(BASE_DIR, "db")
+
 # Global değişkenler
 model = None
+client = None
+word_collection = None
+sentence_collection = None
 metinler = None
-metin_vektorleri = None
 kelimeler = None
-kelime_vektorleri = None
 iliskiler = None
 
 def load_relationships():
@@ -51,19 +55,39 @@ def load_relationships():
         print(f"❌ İlişki yükleme hatası: {e}")
         return False
 
-def load_data():
-    """Tüm verileri yükle"""
-    global model, metinler, metin_vektorleri, kelimeler, kelime_vektorleri
+def setup_chromadb():
+    """ChromaDB bağlantısını kur"""
+    global client, word_collection, sentence_collection
     
     try:
-        print("📡 Model ve veriler yükleniyor...")
+        # ChromaDB client oluştur
+        client = chromadb.PersistentClient(path=DB_DIR)
         
-        # Model yükleme
-        model = SentenceTransformer("dbmdz/bert-base-turkish-cased")
+        # Koleksiyonları cosine distance ile al/oluştur
+        word_collection = client.get_or_create_collection(
+            "kelime_vektorleri",
+            metadata={"hnsw:space": "cosine"}  # Cosine distance kullan
+        )
+        sentence_collection = client.get_or_create_collection(
+            "metin_vektorleri",
+            metadata={"hnsw:space": "cosine"}  # Cosine distance kullan
+        )
         
-        # İlişkileri yükle
-        load_relationships()
+        print(f"✅ ChromaDB bağlantısı kuruldu (Cosine distance)")
+        print(f"🔤 Kelime sayısı: {word_collection.count()}")
+        print(f"📚 Cümle sayısı: {sentence_collection.count()}")
         
+        return True
+        
+    except Exception as e:
+        print(f"❌ ChromaDB bağlantı hatası: {e}")
+        return False
+
+def load_text_data():
+    """Metin verilerini yükle (sadece dosyalardan okuma için)"""
+    global metinler, kelimeler
+    
+    try:
         # Metinleri yükleme
         if os.path.exists("metinler.txt"):
             with open("metinler.txt", "r", encoding="utf-8") as f:
@@ -74,18 +98,34 @@ def load_data():
             with open("kelimeler.txt", "r", encoding="utf-8") as f:
                 kelimeler = [line.strip() for line in f if line.strip()]
         
-        # Vektörleri yükleme
-        if os.path.exists("metin_vektorleri.npy"):
-            metin_vektorleri = np.load("metin_vektorleri.npy")
-            
-        if os.path.exists("kelime_vektorleri.npy"):
-            kelime_vektorleri = np.load("kelime_vektorleri.npy")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Metin veri yükleme hatası: {e}")
+        return False
+
+def load_data():
+    """Tüm verileri ve bağlantıları yükle"""
+    global model
+    
+    try:
+        print("📡 Model ve veriler yükleniyor...")
+        
+        # Model yükleme
+        model = SentenceTransformer("dbmdz/bert-base-turkish-cased")
+        
+        # ChromaDB setup
+        if not setup_chromadb():
+            return False
+        
+        # Text data yükle
+        if not load_text_data():
+            return False
+        
+        # İlişkileri yükle
+        load_relationships()
         
         print(f"✅ Yükleme tamamlandı!")
-        if metinler:
-            print(f"📚 Toplam cümle: {len(metinler)}")
-        if kelimeler:
-            print(f"🔤 Toplam kelime: {len(kelimeler)}")
         
         return True
         
@@ -94,66 +134,84 @@ def load_data():
         return False
 
 def search_in_sentences(query, top_k=5):
-    """Cümleler içinde arama"""
-    if model is None or metinler is None or metin_vektorleri is None:
+    """ChromaDB kullanarak cümlelerde arama"""
+    if model is None or sentence_collection is None:
         return []
     
     try:
         # Sorgu vektörü oluştur
-        query_vector = model.encode([query])
+        query_vector = model.encode([query])[0].tolist()
         
-        # Benzerlik hesapla
-        similarities = cosine_similarity(query_vector, metin_vektorleri)[0]
+        # ChromaDB'de arama yap
+        results = sentence_collection.query(
+            query_embeddings=[query_vector],
+            n_results=min(top_k, sentence_collection.count())
+        )
         
-        # En benzer cümleleri bul
-        top_indices = np.argsort(similarities)[::-1][:top_k]
+        # Sonuçları formatla
+        formatted_results = []
+        if results['documents'] and results['documents'][0]:
+            documents = results['documents'][0]
+            distances = results['distances'][0]
+            ids = results['ids'][0]
+            
+            for i, (doc, distance, doc_id) in enumerate(zip(documents, distances, ids)):
+                # Cosine distance'ı cosine similarity'ye çevir
+                # Cosine distance = 1 - cosine similarity
+                # Bu yüzden: cosine similarity = 1 - cosine distance
+                similarity = max(0, 1 - distance)
+                
+                formatted_results.append({
+                    'rank': i + 1,
+                    'sentence': doc,
+                    'similarity': similarity,
+                    'similarity_percent': round(similarity * 100, 1),
+                    'index': int(doc_id)
+                })
         
-        results = []
-        for i, idx in enumerate(top_indices):
-            sentence = metinler[idx]
-            similarity = float(similarities[idx])  # NumPy float32'yi Python float'a çevir
-            results.append({
-                'rank': i + 1,
-                'sentence': sentence,
-                'similarity': similarity,
-                'similarity_percent': round(similarity * 100, 1),
-                'index': int(idx)
-            })
-        
-        return results
+        return formatted_results
         
     except Exception as e:
         print(f"❌ Cümle arama hatası: {e}")
         return []
 
 def search_in_words(query, top_k=5):
-    """Kelimeler içinde arama"""
-    if model is None or kelimeler is None or kelime_vektorleri is None:
+    """ChromaDB kullanarak kelimelerde arama"""
+    if model is None or word_collection is None:
         return []
     
     try:
         # Sorgu vektörü oluştur
-        query_vector = model.encode([query])
+        query_vector = model.encode([query])[0].tolist()
         
-        # Benzerlik hesapla
-        similarities = cosine_similarity(query_vector, kelime_vektorleri)[0]
+        # ChromaDB'de arama yap
+        results = word_collection.query(
+            query_embeddings=[query_vector],
+            n_results=min(top_k, word_collection.count())
+        )
         
-        # En benzer kelimeleri bul
-        top_indices = np.argsort(similarities)[::-1][:top_k]
+        # Sonuçları formatla
+        formatted_results = []
+        if results['documents'] and results['documents'][0]:
+            documents = results['documents'][0]
+            distances = results['distances'][0]
+            ids = results['ids'][0]
+            
+            for i, (doc, distance, doc_id) in enumerate(zip(documents, distances, ids)):
+                # Cosine distance'ı cosine similarity'ye çevir
+                # Cosine distance = 1 - cosine similarity
+                # Bu yüzden: cosine similarity = 1 - cosine distance
+                similarity = max(0, 1 - distance)
+                
+                formatted_results.append({
+                    'rank': i + 1,
+                    'word': doc,
+                    'similarity': similarity,
+                    'similarity_percent': round(similarity * 100, 1),
+                    'index': int(doc_id)
+                })
         
-        results = []
-        for i, idx in enumerate(top_indices):
-            word = kelimeler[idx]
-            similarity = float(similarities[idx])  # NumPy float32'yi Python float'a çevir
-            results.append({
-                'rank': i + 1,
-                'word': word,
-                'similarity': similarity,
-                'similarity_percent': round(similarity * 100, 1),
-                'index': int(idx)
-            })
-        
-        return results
+        return formatted_results
         
     except Exception as e:
         print(f"❌ Kelime arama hatası: {e}")
@@ -177,19 +235,21 @@ def search():
         
         if search_type == 'sentences':
             results = search_in_sentences(query, top_k=5)
+            total_data = sentence_collection.count() if sentence_collection else 0
             return jsonify({
                 'query': query,
                 'type': 'sentences',
                 'results': results,
-                'total_data': len(metinler) if metinler else 0
+                'total_data': total_data
             })
         else:
             results = search_in_words(query, top_k=5)
+            total_data = word_collection.count() if word_collection else 0
             return jsonify({
                 'query': query,
                 'type': 'words',
                 'results': results,
-                'total_data': len(kelimeler) if kelimeler else 0
+                'total_data': total_data
             })
             
     except Exception as e:
@@ -226,12 +286,13 @@ def get_relationships(word):
 def stats():
     """İstatistikler"""
     return jsonify({
-        'sentences_count': len(metinler) if metinler else 0,
-        'words_count': len(kelimeler) if kelimeler else 0,
+        'sentences_count': sentence_collection.count() if sentence_collection else 0,
+        'words_count': word_collection.count() if word_collection else 0,
         'relationships_count': len(iliskiler) if iliskiler else 0,
         'model_loaded': model is not None,
-        'sentence_vectors_loaded': metin_vektorleri is not None,
-        'word_vectors_loaded': kelime_vektorleri is not None
+        'chromadb_connected': client is not None,
+        'sentence_collection_ready': sentence_collection is not None,
+        'word_collection_ready': word_collection is not None
     })
 
 if __name__ == '__main__':
@@ -239,7 +300,7 @@ if __name__ == '__main__':
     
     # Verileri yükle
     if load_data():
-        print("🎯 Semantik Arama Sistemi Hazır!")
+        print("🎯 ChromaDB Tabanlı Semantik Arama Sistemi Hazır!")
         app.run(debug=True, host='0.0.0.0', port=5001)
     else:
         print("❌ Veri yüklenemedi, uygulama başlatılamıyor!")
