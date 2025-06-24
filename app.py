@@ -1,4 +1,4 @@
-# app.py
+# app.py - Multi-Model Semantic Search Backend
 from flask import Flask, render_template, request, jsonify
 import os
 import chromadb
@@ -10,11 +10,18 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_DIR = os.path.join(BASE_DIR, "db")
 
-# Global değişkenler
-model = None
+# Desteklenen modellerin tanımı (rebuild_database.py ile aynı)
+SUPPORTED_MODELS = {
+    "dbmdz_bert": "dbmdz/bert-base-turkish-cased",
+    "turkcell_roberta": "TURKCELL/roberta-base-turkish-uncased",
+    "multilingual_mpnet": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+}
+
+# Çoklu model yapıları - Global değişkenler
+loaded_models = {}
+word_collections = {}
+sentence_collections = {}
 client = None
-word_collection = None
-sentence_collection = None
 metinler = None
 kelimeler = None
 iliskiler = None
@@ -56,27 +63,46 @@ def load_relationships():
         return False
 
 def setup_chromadb():
-    """ChromaDB bağlantısını kur"""
-    global client, word_collection, sentence_collection
+    """ChromaDB bağlantısını kur ve çoklu modeller için koleksiyonları yükle"""
+    global client, word_collections, sentence_collections
     
     try:
         # ChromaDB client oluştur
         client = chromadb.PersistentClient(path=DB_DIR)
         
-        # Koleksiyonları cosine distance ile al/oluştur
-        word_collection = client.get_or_create_collection(
-            "kelime_vektorleri",
-            metadata={"hnsw:space": "cosine"}  # Cosine distance kullan
-        )
-        sentence_collection = client.get_or_create_collection(
-            "metin_vektorleri",
-            metadata={"hnsw:space": "cosine"}  # Cosine distance kullan
-        )
+        # Tüm koleksiyonları listele
+        all_collections = client.list_collections()
+        print(f"🔍 Bulunan koleksiyonlar: {len(all_collections)}")
         
-        print(f"✅ ChromaDB bağlantısı kuruldu (Cosine distance)")
-        print(f"🔤 Kelime sayısı: {word_collection.count()}")
-        print(f"📚 Cümle sayısı: {sentence_collection.count()}")
+        # Her desteklenen model için koleksiyonları yükle
+        for model_id in SUPPORTED_MODELS.keys():
+            word_collection_name = f"kelime_vektorleri_{model_id}"
+            sentence_collection_name = f"metin_vektorleri_{model_id}"
+            
+            try:
+                # Kelime koleksiyonu
+                word_collections[model_id] = client.get_collection(word_collection_name)
+                word_count = word_collections[model_id].count()
+                
+                # Cümle koleksiyonu
+                sentence_collections[model_id] = client.get_collection(sentence_collection_name)
+                sentence_count = sentence_collections[model_id].count()
+                
+                print(f"✅ {model_id}: Kelimeler={word_count}, Cümleler={sentence_count}")
+                
+            except Exception as e:
+                print(f"⚠️  {model_id} koleksiyonları bulunamadı: {e}")
+                # Model koleksiyonları yoksa sözlüklerden çıkar
+                word_collections.pop(model_id, None)
+                sentence_collections.pop(model_id, None)
         
+        available_models = list(word_collections.keys())
+        print(f"🎯 Aktif modeller: {available_models}")
+        
+        if not available_models:
+            print("❌ Hiçbir model koleksiyonu bulunamadı!")
+            return False
+            
         return True
         
     except Exception as e:
@@ -104,18 +130,39 @@ def load_text_data():
         print(f"❌ Metin veri yükleme hatası: {e}")
         return False
 
-def load_data():
-    """Tüm verileri ve bağlantıları yükle"""
-    global model
+def load_models():
+    """Aktif koleksiyonlara sahip modelleri yükle"""
+    global loaded_models
     
     try:
-        print("📡 Model ve veriler yükleniyor...")
+        available_model_ids = list(word_collections.keys())
+        print(f"🤖 Modeller yükleniyor: {available_model_ids}")
         
-        # Model yükleme
-        model = SentenceTransformer("dbmdz/bert-base-turkish-cased")
+        for model_id in available_model_ids:
+            if model_id in SUPPORTED_MODELS:
+                model_name = SUPPORTED_MODELS[model_id]
+                print(f"   📡 Yükleniyor: {model_name}")
+                loaded_models[model_id] = SentenceTransformer(model_name)
+                print(f"   ✅ Başarılı: {model_id}")
+        
+        print(f"🎉 Yüklenen modeller: {list(loaded_models.keys())}")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Model yükleme hatası: {e}")
+        return False
+
+def load_data():
+    """Tüm verileri ve bağlantıları yükle"""
+    try:
+        print("📡 Multi-model sistem yükleniyor...")
         
         # ChromaDB setup
         if not setup_chromadb():
+            return False
+        
+        # Modelleri yükle
+        if not load_models():
             return False
         
         # Text data yükle
@@ -125,17 +172,22 @@ def load_data():
         # İlişkileri yükle
         load_relationships()
         
-        print(f"✅ Yükleme tamamlandı!")
-        
+        print(f"✅ Multi-model sistem yüklendi!")
         return True
         
     except Exception as e:
-        print(f"❌ Veri yükleme hatası: {e}")
+        print(f"❌ Sistem yükleme hatası: {e}")
         return False
 
-def search_in_sentences(query, top_k=5):
-    """ChromaDB kullanarak cümlelerde arama"""
-    if model is None or sentence_collection is None:
+def search_in_sentences(query, model_id, top_k=5):
+    """Belirtilen model ile cümlelerde arama"""
+    
+    # Dinamik olarak doğru modeli ve koleksiyonu seç
+    model = loaded_models.get(model_id)
+    collection = sentence_collections.get(model_id)
+    
+    if not model or not collection:
+        print(f"❌ Model veya koleksiyon bulunamadı: {model_id}")
         return []
     
     try:
@@ -143,9 +195,9 @@ def search_in_sentences(query, top_k=5):
         query_vector = model.encode([query])[0].tolist()
         
         # ChromaDB'de arama yap
-        results = sentence_collection.query(
+        results = collection.query(
             query_embeddings=[query_vector],
-            n_results=min(top_k, sentence_collection.count())
+            n_results=min(top_k, collection.count())
         )
         
         # Sonuçları formatla
@@ -157,8 +209,6 @@ def search_in_sentences(query, top_k=5):
             
             for i, (doc, distance, doc_id) in enumerate(zip(documents, distances, ids)):
                 # Cosine distance'ı cosine similarity'ye çevir
-                # Cosine distance = 1 - cosine similarity
-                # Bu yüzden: cosine similarity = 1 - cosine distance
                 similarity = max(0, 1 - distance)
                 
                 formatted_results.append({
@@ -172,12 +222,18 @@ def search_in_sentences(query, top_k=5):
         return formatted_results
         
     except Exception as e:
-        print(f"❌ Cümle arama hatası: {e}")
+        print(f"❌ {model_id} cümle arama hatası: {e}")
         return []
 
-def search_in_words(query, top_k=5):
-    """ChromaDB kullanarak kelimelerde arama"""
-    if model is None or word_collection is None:
+def search_in_words(query, model_id, top_k=5):
+    """Belirtilen model ile kelimelerde arama"""
+    
+    # Dinamik olarak doğru modeli ve koleksiyonu seç
+    model = loaded_models.get(model_id)
+    collection = word_collections.get(model_id)
+    
+    if not model or not collection:
+        print(f"❌ Model veya koleksiyon bulunamadı: {model_id}")
         return []
     
     try:
@@ -185,9 +241,9 @@ def search_in_words(query, top_k=5):
         query_vector = model.encode([query])[0].tolist()
         
         # ChromaDB'de arama yap
-        results = word_collection.query(
+        results = collection.query(
             query_embeddings=[query_vector],
-            n_results=min(top_k, word_collection.count())
+            n_results=min(top_k, collection.count())
         )
         
         # Sonuçları formatla
@@ -199,22 +255,24 @@ def search_in_words(query, top_k=5):
             
             for i, (doc, distance, doc_id) in enumerate(zip(documents, distances, ids)):
                 # Cosine distance'ı cosine similarity'ye çevir
-                # Cosine distance = 1 - cosine similarity
-                # Bu yüzden: cosine similarity = 1 - cosine distance
                 similarity = max(0, 1 - distance)
+                
+                # İlişkileri al
+                relationships = iliskiler.get(doc.lower(), {})
                 
                 formatted_results.append({
                     'rank': i + 1,
                     'word': doc,
                     'similarity': similarity,
                     'similarity_percent': round(similarity * 100, 1),
-                    'index': int(doc_id)
+                    'index': int(doc_id),
+                    'relationships': relationships
                 })
         
         return formatted_results
         
     except Exception as e:
-        print(f"❌ Kelime arama hatası: {e}")
+        print(f"❌ {model_id} kelime arama hatası: {e}")
         return []
 
 @app.route('/')
@@ -224,36 +282,51 @@ def index():
 
 @app.route('/search', methods=['POST'])
 def search():
-    """Arama endpoint'i"""
+    """Çoklu model destekli arama endpoint'i"""
+    data = request.get_json()
+    query = data.get('query', '').strip()
+    # model_ids, front-end'den gelen liste: ["dbmdz_bert", "turkcell_roberta"]
+    model_ids = data.get('models', [])
+    search_type = data.get('type', 'sentences')  # 'sentences' veya 'words'
+    
+    if not query:
+        return jsonify({'error': 'Arama terimi gerekli!'})
+        
+    if not model_ids:
+        return jsonify({'error': 'En az bir model seçimi gerekli!'})
+    
+    # Geçersiz model ID'lerini filtrele
+    valid_model_ids = [mid for mid in model_ids if mid in loaded_models]
+    if not valid_model_ids:
+        return jsonify({'error': 'Seçilen modeller yüklenmemiş!'})
+    
     try:
-        data = request.get_json()
-        query = data.get('query', '').strip()
-        search_type = data.get('type', 'sentences')  # 'sentences' veya 'words'
+        final_results = {}
         
-        if not query:
-            return jsonify({'error': 'Arama terimi gerekli!'})
-        
-        if search_type == 'sentences':
-            results = search_in_sentences(query, top_k=5)
-            total_data = sentence_collection.count() if sentence_collection else 0
-            return jsonify({
-                'query': query,
-                'type': 'sentences',
-                'results': results,
-                'total_data': total_data
-            })
-        else:
-            results = search_in_words(query, top_k=5)
-            total_data = word_collection.count() if word_collection else 0
-            return jsonify({
-                'query': query,
-                'type': 'words',
-                'results': results,
-                'total_data': total_data
-            })
+        for model_id in valid_model_ids:
+            # Her model için ayrı ayrı arama yap
+            if search_type == 'sentences':
+                results = search_in_sentences(query, model_id, top_k=5)
+            else:  # words
+                results = search_in_words(query, model_id, top_k=5)
             
+            final_results[model_id] = {
+                "model_name": SUPPORTED_MODELS.get(model_id, "Bilinmeyen Model"),
+                "model_id": model_id,
+                "results": results,
+                "total_found": len(results)
+            }
+        
+        return jsonify({
+            'query': query,
+            'type': search_type,
+            'search_results': final_results,
+            'models_used': valid_model_ids
+        })
+        
     except Exception as e:
-        return jsonify({'error': f'Arama hatası: {str(e)}'})
+        print(f"❌ Arama hatası: {e}")
+        return jsonify({'error': f'Arama yapılırken hata oluştu: {str(e)}'})
 
 @app.route('/relationships/<word>')
 def get_relationships(word):
@@ -264,43 +337,69 @@ def get_relationships(word):
         
         if not relationships:
             return jsonify({
-                'word': word,
-                'found': False,
-                'message': f'"{word}" kelimesi için ilişki bilgisi bulunamadı.'
+                'error': f'"{word}" kelimesi için ilişki bulunamadı'
             })
         
         return jsonify({
             'word': word,
-            'found': True,
-            'relationships': {
-                'hiperonim': relationships.get('hiperonim', []),
-                'hiponim': relationships.get('hiponim', []), 
-                'meronim': relationships.get('meronim', [])
-            }
+            'relationships': relationships,
+            'total_types': len(relationships)
         })
         
     except Exception as e:
-        return jsonify({'error': f'İlişki getirme hatası: {str(e)}'})
+        return jsonify({'error': f'İlişki arama hatası: {str(e)}'})
 
 @app.route('/stats')
 def stats():
-    """İstatistikler"""
-    return jsonify({
-        'sentences_count': sentence_collection.count() if sentence_collection else 0,
-        'words_count': word_collection.count() if word_collection else 0,
-        'relationships_count': len(iliskiler) if iliskiler else 0,
-        'model_loaded': model is not None,
-        'chromadb_connected': client is not None,
-        'sentence_collection_ready': sentence_collection is not None,
-        'word_collection_ready': word_collection is not None
-    })
+    """Sistem istatistikleri - çoklu model destekli"""
+    try:
+        total_sentences = 0
+        total_words = 0
+        model_stats = {}
+        
+        # Her model için istatistikleri topla
+        for model_id in loaded_models.keys():
+            word_count = word_collections.get(model_id, {}).count() if word_collections.get(model_id) else 0
+            sentence_count = sentence_collections.get(model_id, {}).count() if sentence_collections.get(model_id) else 0
+            
+            model_stats[model_id] = {
+                'name': SUPPORTED_MODELS.get(model_id, 'Unknown'),
+                'words': word_count,
+                'sentences': sentence_count
+            }
+            
+            total_words = max(total_words, word_count)  # Veriler aynı olduğu için max al
+            total_sentences = max(total_sentences, sentence_count)
+        
+        return jsonify({
+            'sentences_count': total_sentences,
+            'words_count': total_words,
+            'relationships_count': len(iliskiler) if iliskiler else 0,
+            'models_loaded': len(loaded_models),
+            'model_loaded': len(loaded_models) > 0,
+            'available_models': list(loaded_models.keys()),
+            'model_details': model_stats,
+            'supported_models': SUPPORTED_MODELS
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'İstatistik hatası: {str(e)}',
+            'sentences_count': 0,
+            'words_count': 0,
+            'relationships_count': 0,
+            'models_loaded': 0,
+            'model_loaded': False
+        })
 
 if __name__ == '__main__':
-    print("🚀 Flask Uygulaması Başlatılıyor...")
+    print("🎯 Multi-Model Türkçe Semantik Arama Sistemi")
+    print("=" * 50)
     
     # Verileri yükle
     if load_data():
-        print("🎯 ChromaDB Tabanlı Semantik Arama Sistemi Hazır!")
+        print("🚀 Sistem hazır! http://127.0.0.1:5001")
         app.run(debug=True, host='0.0.0.0', port=5001)
     else:
-        print("❌ Veri yüklenemedi, uygulama başlatılamıyor!")
+        print("❌ Sistem başlatılamadı!")
+        print("💡 Önce 'python rebuild_database.py' komutunu çalıştırın")

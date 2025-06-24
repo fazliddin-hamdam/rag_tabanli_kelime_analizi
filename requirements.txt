@@ -6,3 +6,6 @@ langchain
 langchain-community
 langchain-chroma
 scikit-learn
+requests
+torch
+transformers
