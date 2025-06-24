@@ -4,6 +4,8 @@ let currentSearchType = 'sentences';
 let availableModels = {};
 let systemStats = {};
 let isDropdownOpen = false;
+let searchDebounceTimer = null;
+const DEBOUNCE_DELAY = 500; // 500ms debounce
 
 // Her arama tipi için son aramayı hafızada tut
 let searchHistory = {
@@ -12,15 +14,165 @@ let searchHistory = {
     relationships: { query: '', results: null }
 };
 
+// Local storage key for caching search results
+const CACHE_KEY_PREFIX = 'semantik_arama_cache_';
+const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+// Initialize cache data structure
+function initializeCache() {
+    return {
+        query: '',
+        searchType: '',
+        models: [],
+        results: null,
+        timestamp: Date.now()
+    };
+}
+
+// Generate cache key based on query, search type and models
+function generateCacheKey(query, searchType, models) {
+    const modelsString = models.sort().join(',');
+    return CACHE_KEY_PREFIX + btoa(encodeURIComponent(query + '_' + searchType + '_' + modelsString));
+}
+
+// Save search results to localStorage
+function saveSearchToCache(query, searchType, models, results) {
+    try {
+        const cacheKey = generateCacheKey(query, searchType, models);
+        const cacheData = {
+            query: query,
+            searchType: searchType,
+            models: models,
+            results: results,
+            timestamp: Date.now()
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+        
+        // Also maintain a list of cache keys for cleanup
+        const cacheKeys = getCacheKeysList();
+        if (!cacheKeys.includes(cacheKey)) {
+            cacheKeys.push(cacheKey);
+            localStorage.setItem(CACHE_KEY_PREFIX + 'keys', JSON.stringify(cacheKeys));
+        }
+        
+        // Clean old cache entries
+        cleanExpiredCache();
+    } catch (e) {
+        console.warn('Cache save failed:', e);
+    }
+}
+
+// Load search results from localStorage
+function loadSearchFromCache(query, searchType, models) {
+    try {
+        const cacheKey = generateCacheKey(query, searchType, models);
+        const cachedData = localStorage.getItem(cacheKey);
+        
+        if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+            
+            // Check if cache is still valid (not expired)
+            if (Date.now() - parsedData.timestamp < CACHE_EXPIRY) {
+                return parsedData.results;
+            } else {
+                // Remove expired cache
+                localStorage.removeItem(cacheKey);
+                removeCacheKeyFromList(cacheKey);
+            }
+        }
+    } catch (e) {
+        console.warn('Cache load failed:', e);
+    }
+    return null;
+}
+
+// Get list of cache keys
+function getCacheKeysList() {
+    try {
+        const keys = localStorage.getItem(CACHE_KEY_PREFIX + 'keys');
+        return keys ? JSON.parse(keys) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+// Remove cache key from list
+function removeCacheKeyFromList(keyToRemove) {
+    try {
+        const cacheKeys = getCacheKeysList();
+        const updatedKeys = cacheKeys.filter(key => key !== keyToRemove);
+        localStorage.setItem(CACHE_KEY_PREFIX + 'keys', JSON.stringify(updatedKeys));
+    } catch (e) {
+        console.warn('Cache key removal failed:', e);
+    }
+}
+
+// Clean expired cache entries
+function cleanExpiredCache() {
+    try {
+        const cacheKeys = getCacheKeysList();
+        const validKeys = [];
+        
+        cacheKeys.forEach(key => {
+            const cachedData = localStorage.getItem(key);
+            if (cachedData) {
+                try {
+                    const parsedData = JSON.parse(cachedData);
+                    if (Date.now() - parsedData.timestamp < CACHE_EXPIRY) {
+                        validKeys.push(key);
+                    } else {
+                        localStorage.removeItem(key);
+                    }
+                } catch (e) {
+                    localStorage.removeItem(key);
+                }
+            }
+        });
+        
+        localStorage.setItem(CACHE_KEY_PREFIX + 'keys', JSON.stringify(validKeys));
+    } catch (e) {
+        console.warn('Cache cleanup failed:', e);
+    }
+}
+
+// Debounced search function
+function debouncedSearch() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+        const query = document.getElementById('searchQuery').value.trim();
+        if (query.length >= 2) { // Minimum 2 character for search
+            performSearch();
+        } else {
+            // Clear results if query is too short
+            document.getElementById('results').innerHTML = '';
+        }
+    }, DEBOUNCE_DELAY);
+}
+
+// Auto search when search type changes
+function autoSearchOnTypeChange() {
+    const query = document.getElementById('searchQuery').value.trim();
+    if (query.length >= 2) {
+        performSearch();
+    }
+}
+
 // Sayfa yüklendiğinde sistem bilgilerini al
 document.addEventListener('DOMContentLoaded', function() {
     loadSystemInfo();
     
     // Enter tuşu ile arama
-    document.getElementById('searchQuery').addEventListener('keypress', function(e) {
+    const searchInput = document.getElementById('searchQuery');
+    searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
+            clearTimeout(searchDebounceTimer); // Cancel debounce on enter
             performSearch();
         }
+    });
+
+    // Input change event for automatic search
+    searchInput.addEventListener('input', function(e) {
+        debouncedSearch();
     });
 
     // Dropdown dışına tıklandığında kapat
@@ -30,6 +182,39 @@ document.addEventListener('DOMContentLoaded', function() {
             closeDropdown();
         }
     });
+
+    // Arama tipi değiştirme event listeners
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Aktif buton stilini değiştir
+            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Arama tipini güncelle
+            currentSearchType = this.getAttribute('data-type');
+            
+            // Placeholder'ı güncelle
+            const input = document.getElementById('searchQuery');
+            if (currentSearchType === 'sentences') {
+                input.placeholder = 'Cümleler içinde aramak istediğiniz kelime veya ifadeyi yazın...';
+            } else if (currentSearchType === 'words') {
+                input.placeholder = 'Kelimeler içinde aramak istediğiniz kelimeyi yazın...';
+            } else {
+                input.placeholder = 'İlişkilerini öğrenmek istediğiniz kelimeyi yazın...';
+            }
+            
+            // Örnek aramaları güncelle
+            document.getElementById('sentenceExamples').style.display = currentSearchType === 'sentences' ? 'block' : 'none';
+            document.getElementById('wordExamples').style.display = currentSearchType === 'words' ? 'block' : 'none';
+            document.getElementById('relationshipExamples').style.display = currentSearchType === 'relationships' ? 'block' : 'none';
+            
+            // Auto search when type changes if query exists
+            autoSearchOnTypeChange();
+        });
+    });
+
+    // Clean old cache on page load
+    cleanExpiredCache();
 });
 
 // Dropdown'u aç/kapat
@@ -119,7 +304,7 @@ function loadModelSelector(data) {
         const sentenceCount = modelDetails ? modelDetails.sentences : 0;
         
         modelsHTML += `
-            <div class="model-option ${isChecked ? 'selected' : ''}" onclick="toggleModelSelection('${modelId}')">
+            <div class="model-option ${isChecked ? 'selected' : ''}" data-model-id="${modelId}">
                 <label class="model-label">
                     <input type="checkbox" 
                            name="model" 
@@ -141,14 +326,34 @@ function loadModelSelector(data) {
     
     modelOptions.innerHTML = modelsHTML;
     
+    // Event listeners ekle
+    addModelOptionEventListeners();
+    
     // Dropdown text'ini güncelle
     updateDropdownText();
     updateModelSelection();
 }
 
-// Model seçimini toggle et
+// Model seçeneklerine event listener ekle
+function addModelOptionEventListeners() {
+    const modelOptions = document.querySelectorAll('.model-option');
+    
+    modelOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const modelId = this.getAttribute('data-model-id');
+            toggleModelSelection(modelId);
+        });
+    });
+}
+
+// Model seçimini toggle et - FIX edildi
 function toggleModelSelection(modelId) {
-    const modelOption = document.querySelector(`.model-option[onclick="toggleModelSelection('${modelId}')"]`);
+    const modelOption = document.querySelector(`.model-option[data-model-id="${modelId}"]`);
+    if (!modelOption) return;
+    
     const checkbox = modelOption.querySelector('input[type="checkbox"]');
     const checkIcon = modelOption.querySelector('.model-check');
     
@@ -167,6 +372,9 @@ function toggleModelSelection(modelId) {
     
     updateDropdownText();
     updateModelSelection();
+    
+    // Auto search when model selection changes if query exists
+    autoSearchOnTypeChange();
 }
 
 // Dropdown text'ini güncelle
@@ -227,45 +435,6 @@ function getSelectedModels() {
     return Array.from(checkboxes).map(cb => cb.value);
 }
 
-// Arama tipi değiştirme
-document.querySelectorAll('.toggle-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        // Aktif buton stilini değiştir
-        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        
-        // Arama tipini güncelle
-        currentSearchType = this.getAttribute('data-type');
-        
-        // Placeholder'ı güncelle
-        const input = document.getElementById('searchQuery');
-        if (currentSearchType === 'sentences') {
-            input.placeholder = 'Cümleler içinde aramak istediğiniz kelime veya ifadeyi yazın...';
-        } else if (currentSearchType === 'words') {
-            input.placeholder = 'Kelimeler içinde aramak istediğiniz kelimeyi yazın...';
-        } else {
-            input.placeholder = 'İlişkilerini öğrenmek istediğiniz kelimeyi yazın...';
-        }
-        
-        // Örnek aramaları güncelle
-        document.getElementById('sentenceExamples').style.display = currentSearchType === 'sentences' ? 'block' : 'none';
-        document.getElementById('wordExamples').style.display = currentSearchType === 'words' ? 'block' : 'none';
-        document.getElementById('relationshipExamples').style.display = currentSearchType === 'relationships' ? 'block' : 'none';
-        
-        // Bu arama tipi için kaydedilmiş arama var mı kontrol et
-        const savedSearch = searchHistory[currentSearchType];
-        if (savedSearch && savedSearch.query && savedSearch.results) {
-            // Kaydedilmiş aramayı geri yükle
-            input.value = savedSearch.query;
-            restoreSearchResults(savedSearch.results, savedSearch.query);
-        } else {
-            // Sonuçları temizle
-            input.value = '';
-            document.getElementById('results').innerHTML = '';
-        }
-    });
-});
-
 // Örnek sorgu seç
 function setQuery(query) {
     // Önceki aramayı temizle çünkü yeni bir arama başlatılıyor
@@ -287,6 +456,31 @@ function performSearch() {
     const selectedModels = getSelectedModels();
     if (selectedModels.length === 0) {
         alert('Lütfen en az bir model seçin!');
+        return;
+    }
+
+    // Check cache first
+    const cachedResults = loadSearchFromCache(query, currentSearchType, selectedModels);
+    if (cachedResults) {
+        console.log('🎯 Cache hit - loading from localStorage');
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = `
+            <div class="cache-indicator">
+                <small>📱 Cached results loaded • ${new Date().toLocaleTimeString()}</small>
+            </div>
+        `;
+        
+        if (currentSearchType === 'relationships') {
+            displayRelationships(cachedResults);
+        } else {
+            displayMultiModelResults(cachedResults);
+        }
+        
+        // Update search history
+        searchHistory[currentSearchType] = {
+            query: query,
+            results: cachedResults
+        };
         return;
     }
 
@@ -316,6 +510,8 @@ function performSearch() {
                 `;
             } else {
                 displayRelationships(data);
+                // Save to cache
+                saveSearchToCache(query, currentSearchType, selectedModels, data);
                 // Başarılı aramayı kaydet
                 searchHistory[currentSearchType] = {
                     query: query,
@@ -358,6 +554,8 @@ function performSearch() {
                 `;
             } else {
                 displayMultiModelResults(data);
+                // Save to cache
+                saveSearchToCache(query, currentSearchType, selectedModels, data);
                 // Başarılı aramayı kaydet
                 searchHistory[currentSearchType] = {
                     query: query,
@@ -384,6 +582,17 @@ function displayMultiModelResults(data) {
     const searchResults = data.search_results || {};
     const modelsUsed = data.models_used || [];
     
+    // Model sayısına göre grid layout sınıfını belirle
+    const gridClass = modelsUsed.length === 3 ? 'model-results-grid three-models' : 'model-results-grid';
+    
+    // 3 model için container'ı geniş yap
+    const container = document.querySelector('.container');
+    if (modelsUsed.length === 3) {
+        container.classList.add('wide-layout');
+    } else {
+        container.classList.remove('wide-layout');
+    }
+    
     if (modelsUsed.length === 0) {
         resultsDiv.innerHTML = `
             <div class="no-results">
@@ -397,11 +606,10 @@ function displayMultiModelResults(data) {
 
     // Sonuç başlığı
     let resultsHTML = `
-        <div class="search-summary">
-            <h3>🔍 "${data.query}" Arama Sonuçları</h3>
-            <p>${modelsUsed.length} model ile ${data.type === 'sentences' ? 'cümle' : 'kelime'} araması</p>
+        <div class="search-summary compact">
+            <small>🔍 "${data.query}" • ${modelsUsed.length} model • ${data.type === 'sentences' ? 'cümle' : 'kelime'}</small>
         </div>
-        <div class="model-results-grid">
+        <div class="${gridClass}">
     `;
 
     // Her model için sonuçları göster
@@ -412,17 +620,15 @@ function displayMultiModelResults(data) {
         const modelName = getModelDisplayName(modelId);
         const results = modelData.results || [];
         
-        resultsHTML += `
+            resultsHTML += `
             <div class="model-results-column">
                 <div class="model-header">
                     <h4>${modelName}</h4>
                     <div class="model-details">
-                        <small>${modelData.model_name}</small>
-                        <span class="result-count">${results.length} sonuç</span>
                     </div>
                 </div>
                 <div class="model-results-list">
-        `;
+            `;
 
         if (results.length === 0) {
             resultsHTML += `
@@ -551,10 +757,10 @@ function displayRelationships(data) {
             });
             
             resultsHTML += `
-                    </div>
                 </div>
-            `;
-        }
+            </div>
+        `;
+    }
     }
 
     resultsHTML += `
@@ -567,13 +773,25 @@ function displayRelationships(data) {
 
 // İlişkili kelimeyi ara
 function searchRelatedWord(word) {
-    document.getElementById('searchQuery').value = word;
-    // Kelime aramasına geç
-    document.querySelector('[data-type="words"]').click();
-    performSearch();
+    // Arama tipini kelimeler olarak değiştir
+    currentSearchType = 'words';
+    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.toggle-btn[data-type="words"]').classList.add('active');
+    
+    // Placeholder'ı güncelle
+    const input = document.getElementById('searchQuery');
+    input.placeholder = 'Kelimeler içinde aramak istediğiniz kelimeyi yazın...';
+    
+    // Örnek aramaları güncelle
+    document.getElementById('sentenceExamples').style.display = 'none';
+    document.getElementById('wordExamples').style.display = 'block';
+    document.getElementById('relationshipExamples').style.display = 'none';
+    
+    // Aramayı gerçekleştir
+    setQuery(word);
 }
 
-// Sonuçları geri yükle (arama tipi değiştirildiğinde)
+// Arama sonuçlarını geri yükle
 function restoreSearchResults(data, query) {
     if (currentSearchType === 'relationships') {
         displayRelationships(data);

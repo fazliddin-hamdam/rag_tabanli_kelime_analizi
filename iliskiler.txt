@@ -14,7 +14,187 @@ telefon|hiperonim:elektronik cihaz|hiponim:akıllı telefon,sabit telefon|meroni
 göl|hiperonim:su kaynağı|hiponim:krater gölü,tuz gölü|meronim:sahil,dalga,ada
 ülke|hiperonim:devlet|hiponim:Türkiye,Almanya,Japonya|meronim:şehir,bayrak,halk
 müzik|hiperonim:sanat|hiponim:klasik müzik,rap,jazz|meronim:nota,melodi,ritim
-araba|hiperonim:araç,taşıt|hiponim:suv,sedan,spor araba|meronim:tekerlek,ayna,fren
 bilim|hiperonim:bilgi|hiponim:fizik,kimya,matematik|meronim:teori,deney,hipotez
 spor|hiperonim:aktivite|hiponim:voleybol,tenis,basketbol|meronim:top,saha,puan
 film|hiperonim:sanat eseri|hiponim:aksiyon filmi,komedi filmi|meronim:sahne,senaryo,oyuncu
+köpek|hiperonim:hayvan,evcil hayvan|hiponim:golden retriever,labrador,pitbull|meronim:kulak,patiler,kuyruk
+balık|hiperonim:hayvan,deniz canlısı|hiponim:levrek,çupra,hamsi|meronim:solungaç,pul,yüzgeç
+aslan|hiperonim:hayvan,vahşi hayvan|hiponim:erkek aslan,dişi aslan|meronim:yeleli,patiler,dişler
+kaplan|hiperonim:hayvan,vahşi hayvan|hiponim:sibirya kaplanı,bengal kaplanı|meronim:çizgiler,patiler,dişler
+at|hiperonim:hayvan,evcil hayvan|hiponim:arap atı,ingiliz atı|meronim:yeleli,ayaklar,kuyruk
+fil|hiperonim:hayvan,vahşi hayvan|hiponim:afrika fili,asya fili|meronim:hortum,kulaklar,dişler
+kartal|hiperonim:kuş,avcı kuş|hiponim:altın kartal,bozkır kartalı|meronim:pençeler,kanatlar,gaga
+tavuk|hiperonim:kuş,çiftlik hayvanı|hiponim:horoz,tavuk|meronim:tarak,kanatlar,patiler
+koyun|hiperonim:hayvan,çiftlik hayvanı|hiponim:koç,koyun|meronim:yün,ayaklar,kulaklar
+inek|hiperonim:hayvan,çiftlik hayvanı|hiponim:boğa,inek|meronim:meme,boynuzlar,ayaklar
+çiçek|hiperonim:bitki|hiponim:gül,lale,karanfil|meronim:taç yaprak,polen,sap
+gül|hiperonim:çiçek|hiponim:kırmızı gül,beyaz gül,sarı gül|meronim:diken,taç yaprak,kök
+elma ağacı|hiperonim:ağaç,meyve ağacı|hiponim:golden,amasya elması|meronim:dallar,meyveler,yapraklar
+çam ağacı|hiperonim:ağaç,iğne yapraklı|hiponim:karaçam,sarıçam|meronim:kozalak,iğneler,gövde
+meşe ağacı|hiperonim:ağaç,yaprak döken|hiponim:kasnak meşesi,sapsız meşe|meronim:meşe palamudu,yapraklar,gövde
+bambu|hiperonim:bitki,ot|hiponim:dev bambu,süs bambusu|meronim:boğum,yapraklar,kök
+kaktüs|hiperonim:bitki,çöl bitkisi|hiponim:dev kaktüs,küçük kaktüs|meronim:dikenler,gövde,çiçek
+sarmaşık|hiperonim:bitki,tırmanıcı bitki|hiponim:asma yaprağı,duvar sarmaşığı|meronim:yapraklar,dallar,kök
+meyve|hiperonim:gıda,bitki ürünü|hiponim:elma,armut,muz|meronim:kabuk,çekirdek,et
+sebze|hiperonim:gıda,bitki ürünü|hiponim:domates,patlıcan,salatalık|meronim:kabuk,çekirdek,yaprak
+et|hiperonim:gıda,hayvan ürünü|hiponim:koyun eti,dana eti,tavuk eti|meronim:kas,yağ,kemik
+süt ürünü|hiperonim:gıda,hayvan ürünü|hiponim:süt,peynir,yoğurt|meronim:protein,yağ,vitamin
+ekmek|hiperonim:gıda,tahıl ürünü|hiponim:beyaz ekmek,tam buğday,çavdar|meronim:kabuk,iç,maya
+makarna|hiperonim:gıda,tahıl ürünü|hiponim:spagetti,penne,fusilli|meronim:un,yumurta,su
+çorba|hiperonim:gıda,sıvı yemek|hiponim:mercimek çorbası,tavuk çorbası|meronim:et suyu,sebze,baharat
+tatlı|hiperonim:gıda,şeker ürünü|hiponim:baklava,muhallebi,dondurma|meronim:şeker,un,süt
+uçak|hiperonim:araç,hava taşıtı|hiponim:yolcu uçağı,savaş uçağı|meronim:kanat,motor,gövde
+gemi|hiperonim:araç,su taşıtı|hiponim:yolcu gemisi,kargo gemisi|meronim:güverte,yelken,dümen
+otobüs|hiperonim:araç,toplu taşıma|hiponim:şehir otobüsü,uzun yol|meronim:koltuk,kapı,tekerlek
+tren|hiperonim:araç,raylı taşıt|hiponim:hızlı tren,metro|meronim:vagon,motor,ray
+bisiklet|hiperonim:araç,pedallı taşıt|hiponim:dağ bisikleti,şehir bisikleti|meronim:tekerlek,pedal,zincir
+motosiklet|hiperonim:araç,motorlu taşıt|hiponim:spor motoru,chopper|meronim:motor,tekerlek,fren
+helikopter|hiperonim:araç,hava taşıtı|hiponim:kurtarma helikopteri,askeri helikopter|meronim:pervane,gövde,motor
+sandalye|hiperonim:mobilya,oturma eşyası|hiponim:koltuk,tabure,berjer|meronim:ayak,oturma yeri,sırtlık
+yatak|hiperonim:mobilya,yatma eşyası|hiponim:tek kişilik,çift kişilik|meronim:şilte,başlık,ayak
+dolap|hiperonim:mobilya,saklama eşyası|hiponim:gardırop,kitaplık,buzdolabı|meronim:raf,kapak,çekmece
+televizyon|hiperonim:elektronik,görüntü cihazı|hiponim:led tv,akıllı tv|meronim:ekran,hoparlör,tuş
+buzdolabı|hiperonim:elektronik,soğutma cihazı|hiponim:derin dondurucu,mini buzdolabı|meronim:raf,kapı,motor
+fırın|hiperonim:elektronik,pişirme cihazı|hiponim:elektrikli fırın,mikrodalga|meronim:ızgara,tepsi,kapı
+çamaşır makinesi|hiperonim:elektronik,temizlik cihazı|hiponim:çamaşır,bulaşık makinesi|meronim:motor,davul,kapı
+aspiratör|hiperonim:elektronik,temizlik cihazı|hiponim:elektrikli süpürge,robot süpürge|meronim:motor,fırça,torba
+gömlek|hiperonim:giysi,üst giyim|hiponim:iş gömleki,spor gömlek|meronim:kollar,yaka,düğme
+pantolon|hiperonim:giysi,alt giyim|hiponim:jean,kumaş pantolon|meronim:bacaklar,bel,fermuuar
+elbise|hiperonim:giysi,kadın giyimi|hiponim:günlük elbise,gece elbisesi|meronim:kollar,etek,yaka
+ayakkabı|hiperonim:ayak giyimi|hiponim:spor ayakkabı,klasik ayakkabı|meronim:taban,bağcık,burun
+çanta|hiperonim:aksesuar,taşıma eşyası|hiponim:el çantası,okul çantası|meronim:kulp,fermuar,bölme
+şapka|hiperonim:aksesuar,baş giyimi|hiponim:kasket,bere,fötr|meronim:siperlik,taç,bağcık
+eldiven|hiperonim:aksesuar,el giyimi|hiponim:deri eldiven,yün eldiven|meronim:parmaklar,bilek,avuç
+piyano|hiperonim:müzik aleti,tuşlu çalgı|hiponim:kuyruklu piyano,dik piyano|meronim:tuşlar,teller,pedal
+gitar|hiperonim:müzik aleti,telli çalgı|hiponim:elektro gitar,akustik gitar|meronim:teller,sap,gövde
+keman|hiperonim:müzik aleti,telli çalgı|hiponim:keman,viyola,çello|meronim:teller,yay,gövde
+davul|hiperonim:müzik aleti,vurmalı çalgı|hiponim:davul seti,def|meronim:deri,çember,çubuk
+flüt|hiperonim:müzik aleti,nefesli çalgı|hiponim:metal flüt,ahşap flüt|meronim:delikler,ağızlık,gövde
+saksafon|hiperonim:müzik aleti,nefesli çalgı|hiponim:alto saksafon,tenor saksafon|meronim:ağızlık,tuşlar,boru
+top|hiperonim:spor malzemesi|hiponim:futbol topu,basketbol topu|meronim:lastik,hava,desen
+raket|hiperonim:spor malzemesi|hiponim:tenis raketi,badminton raketi|meronim:sap,tel,çerçeve
+kayak|hiperonim:spor malzemesi,kış sporu|hiponim:alp kayağı,kros kayağı|meronim:bağlama,kenar,taban
+paten|hiperonim:spor malzemesi|hiponim:buz pateni,tekerlekli paten|meronim:tekerlek,ayakkabı,bağcık
+golf sopası|hiperonim:spor malzemesi|hiponim:driver,putter|meronim:sap,kafa,kulp
+kalem|hiperonim:yazı gereçi|hiponim:kurşun kalem,tükenmez kalem|meronim:uç,gövde,silgi
+defter|hiperonim:yazı gereçi,kağıt ürünü|hiponim:çizgili defter,kareli defter|meronim:sayfa,kapak,tel
+silgi|hiperonim:yazı gereçi|hiponim:kurşun kalem silgisi,beyaz tahta silgisi|meronim:lastik,renk,şekil
+cetvel|hiperonim:yazı gereçi,ölçü aleti|hiponim:plastik cetvel,metal cetvel|meronim:çizgi,sayı,kenar
+tablet|hiperonim:elektronik,taşınabilir cihaz|hiponim:ipad,android tablet|meronim:ekran,batarya,kamera
+fare|hiperonim:bilgisayar donanımı,kontrol cihazı|hiponim:optik fare,kablosuz fare|meronim:tuş,tekerlек,sensör
+klavye|hiperonim:bilgisayar donanımı,giriş cihazı|hiponim:mekanik klavye,membran klavye|meronim:tuşlar,kablo,çerçeve
+monitör|hiperonim:bilgisayar donanımı,görüntü cihazı|hiponim:led monitör,lcd monitör|meronim:ekran,stand,kablo
+yazıcı|hiperonim:bilgisayar donanımı,çıktı cihazı|hiponim:lazer yazıcı,mürekkep püskürtmeli|meronim:kağıt tepsisi,kartuş,roller
+hoparlör|hiperonim:elektronik,ses cihazı|hiponim:bluetooth hoparlör,bilgisayar hoparlörü|meronim:ses membrağı,magnet,kasa
+kulaklık|hiperonim:elektronik,ses cihazı|hiponim:kulak içi,kulak üstü|meronim:sürücü,kablo,yastık
+dağ|hiperonim:coğrafi şekil,yükselti|hiponim:volkanik dağ,sedimanter dağ|meronim:zirve,yamaç,etek
+nehir|hiperonim:su kaynağı,akıntı|hiponim:ırmak,dere,çay|meronim:kaynak,mansap,yatak
+deniz|hiperonim:su kütlesi|hiponim:okyanus,göl,lagün|meronim:dalga,köpük,kıyı
+orman|hiperonim:doğal alan,bitki topluluğu|hiponim:iğne yapraklı orman,karışık orman|meronim:ağaçlar,zemin örtüsü,kanopi
+çöl|hiperonim:iklim bölgesi|hiponim:sıcak çöl,soğuk çöl|meronim:kum,oaz,dün
+bulut|hiperonim:atmosfer olayı|hiponim:cumulus,stratus,cirrus|meronim:su damlacığı,buz kristali,hava
+yıldız|hiperonim:gök cismi|hiponim:güneş,kızıl dev,beyaz cüce|meronim:çekirdek,atmosfer,ışınım
+gezegen|hiperonim:gök cismi|hiponim:iç gezegen,dış gezegen|meronim:atmosfer,uydu,yörünge
+çay|hiperonim:içecek,sıcak içecek|hiponim:siyah çay,yeşil çay,bitki çayı|meronim:yaprak,kafein,aroma
+kahve|hiperonim:içecek,sıcak içecek|hiponim:türk kahvesi,espresso,filtre kahve|meronim:çekirdek,kafein,köpük
+meyve suyu|hiperonim:içecek,soğuk içecek|hiponim:portakal suyu,elma suyu|meronim:meyve özü,su,vitamin
+gazlı içecek|hiperonim:içecek,soğuk içecek|hiponim:kola,gazoz,soda|meronim:karbondioksit,şeker,aroma
+çorbа|hiperonim:yemek,sıvı yemek|hiponim:mercimek çorbası,tavuk çorbası|meronim:et suyu,sebze,baharat
+salata|hiperonim:yemek,soğuk yemek|hiponim:yeşil salata,meyve salatası|meronim:yapraklar,domates,sos
+pilav|hiperonim:yemek,tahıl yemeği|hiponim:bulgur pilavı,pirinç pilavı|meronim:pirinç,su,tereyağı
+pasta|hiperonim:tatlı,hamur işi|hiponim:doğum günü pastası,yaş pasta|meronim:hamur,krema,süsleme
+doktor|hiperonim:sağlık personeli,meslek|hiponim:pratisyen hekim,uzman doktor|meronim:stetoskop,bilgi,tecrübe
+öğretmen|hiperonim:eğitim personeli,meslek|hiponim:sınıf öğretmeni,branş öğretmeni|meronim:bilgi,sabır,kitap
+mühendis|hiperonim:teknik personel,meslek|hiponim:makine mühendisi,bilgisayar mühendisi|meronim:hesap,proje,bilim
+avukat|hiperonim:hukuk personeli,meslek|hiponim:ceza avukatı,medeni hukuk avukatı|meronim:hukuk bilgisi,dava,müvekkil
+hemşire|hiperonim:sağlık personeli,meslek|hiponim:ameliyat hemşiresi,yoğun bakım hemşiresi|meronim:bakım,ilaç,şefkat
+polis|hiperonim:güvenlik personeli,meslek|hiponim:trafik polisi,asayiş polisi|meronim:üniform,silah,yetki
+itfaiyeci|hiperonim:güvenlik personeli,meslek|hiponim:yangın söndürme,kurtarma|meronim:hortum,nefes aleti,merdiven
+şoför|hiperonim:ulaştırma personeli,meslek|hiponim:otobüs şoförü,taksi şoförü|meronim:direksiyon,yol bilgisi,ehliyet
+kırmızı|hiperonim:renk,sıcak renk|hiponim:al,bordo,pembe|meronim:kırmızı pigment,ışık dalgası,görsel algı
+mavi|hiperonim:renk,soğuk renk|hiponim:lacivert,turkuaz,gök mavisi|meronim:mavi pigment,ışık dalgası,görsel algı
+yeşil|hiperonim:renk,doğa rengi|hiponim:çimen yeşili,zeytin yeşili|meronim:yeşil pigment,ışık dalgası,görsel algı
+sarı|hiperonim:renk,sıcak renk|hiponim:altın sarısı,limon sarısı|meronim:sarı pigment,ışık dalgası,görsel algı
+mor|hiperonim:renk,soğuk renk|hiponim:menekşe,lavanta rengi|meronim:mor pigment,ışık dalgası,görsel algı
+turuncu|hiperonim:renk,sıcak renk|hiponim:portakal rengi,kayısı rengi|meronim:turuncu pigment,ışık dalgası,görsel algı
+yağmur|hiperonim:hava olayı,atmosfer olayı|hiponim:sağanak,çisenti,dolu|meronim:su damlası,bulut,nem
+kar|hiperonim:hava olayı,katı yağış|hiponim:toz kar,ıslak kar|meronim:buz kristali,nem,soğuk
+rüzgar|hiperonim:hava olayı,hava hareketi|hiponim:esinti,fırtına,kasırga|meronim:hava basıncı,hareket,ses
+gök gürültüsü|hiperonim:hava olayı,ses olayı|hiponim:yakın gürültü,uzak gürültü|meronim:ses dalgası,şimşek,elektrik
+deprem|hiperonim:doğal afet,yer kabuğu hareketi|hiponim:hafif deprem,büyük deprem|meronim:sarsıntı,fay,enerji
+sel|hiperonim:doğal afet,su baskını|hiponim:ani sel,nehir taşması|meronim:yağmur,su,akıntı
+vadi|hiperonim:coğrafi şekil,çukur alan|hiponim:nehir vadisi,buzul vadisi|meronim:yamaç,taban,eğim
+plato|hiperonim:coğrafi şekil,yüksek düzlük|hiponim:lav platosu,sediman platosu|meronim:yüzey,kenar,yükseklik
+ada|hiperonim:coğrafi şekil,su üstü alan|hiponim:volkanik ada,mercan adası|meronim:kıyı,merkez,çevre
+yarımada|hiperonim:coğrafi şekil,kısmen çevrili alan|hiponim:büyük yarımada,küçük burun|meronim:kara,su,bağlantı
+boğaz|hiperonim:coğrafi şekil,su geçidi|hiponim:dar boğaz,geniş kanal|meronim:su,kıyı,akıntı
+taksi|hiperonim:araç,ticari taşıt|hiponim:sarı taksi,minibüs taksi|meronim:sayaç,kapı,koltuk
+dolmuş|hiperonim:araç,toplu taşıma|hiponim:minibüs dolmuş,otobüs dolmuş|meronim:kapı,koltuk,güzergah
+metro|hiperonim:araç,raylı sistem|hiponim:yeraltı metrosu,yerüstü metro|meronim:vagon,ray,istasyon
+tramvay|hiperonim:araç,raylı sistem|hiponim:elektrikli tramvay,nostaljik tramvay|meronim:elektrik,ray,durak
+vapur|hiperonim:araç,deniz taşıtı|hiponim:şehir hatları,araba vapuru|meronim:güverte,makine,kaptanköprüsü
+gün|hiperonim:zaman birimi|hiponim:hafta içi,hafta sonu|meronim:sabah,öğle,akşam
+hafta|hiperonim:zaman birimi|hiponim:çalışma haftası,tatil haftası|meronim:pazartesi,salı,çarşamba
+ay|hiperonim:zaman birimi|hiponim:ocak,şubat,mart|meronim:hafta,gün,tarih
+yıl|hiperonim:zaman birimi|hiponim:artık yıl,normal yıl|meronim:mevsim,ay,gün
+mevsim|hiperonim:zaman birimi,iklim dönemi|hiponim:ilkbahar,yaz,sonbahar|meronim:ay,hava durumu,doğa
+resim|hiperonim:sanat eseri,görsel sanat|hiponim:yağlı boya,suluboya|meronim:renk,çizgi,kompozisyon
+heykel|hiperonim:sanat eseri,plastik sanat|hiponim:mermer heykel,bronz heykel|meronim:form,malzeme,hacim
+şarkı|hiperonim:sanat eseri,müzik eseri|hiponim:pop şarkı,klasik şarkı|meronim:melodi,söz,ritim
+dans|hiperonim:sanat,performans sanatı|hiponim:halk dansı,modern dans|meronim:hareket,ritim,ifade
+tiyatro|hiperonim:sanat,sahne sanatı|hiponim:dram,komedi,müzikal|meronim:oyuncu,sahne,metin
+göz|hiperonim:organ,duyu organı|hiponim:sağ göz,sol göz|meronim:göz bebeği,göz kapağı,kirpik
+kulak|hiperonim:organ,duyu organı|hiponim:dış kulak,iç kulak|meronim:kulak memesi,kulak kanalı,kulak zarı
+burun|hiperonim:organ,duyu organı|hiponim:burun köprüsü,burun ucu|meronim:burun deliği,kıkırdak,mukus
+ağız|hiperonim:organ,sindirim organı|hiponim:üst çene,alt çene|meronim:dişler,dil,dudak
+kalp|hiperonim:organ,dolaşım organı|hiponim:sol ventrikül,sağ ventrikül|meronim:kalp kapakçığı,damar,kas
+akciğer|hiperonim:organ,solunum organı|hiponim:sağ akciğer,sol akciğer|meronim:bronş,alveol,plevra
+aşk|hiperonim:duygu,insani değer|hiponim:romantik aşk,platonik aşk|meronim:sevgi,tutku,bağlılık
+dostluk|hiperonim:ilişki,sosyal bağ|hiponim:yakın dostluk,mesafeli dostluk|meronim:güven,paylaşım,anlayış
+mutluluk|hiperonim:duygu,pozitif duygu|hiponim:anlık mutluluk,kalıcı mutluluk|meronim:sevinç,huzur,memnuniyet
+özgürlük|hiperonim:değer,temel hak|hiponim:bireysel özgürlük,toplumsal özgürlük|meronim:seçim,karar,hareket
+adalet|hiperonim:değer,ahlaki kavram|hiponim:sosyal adalet,hukuki adalet|meronim:eşitlik,hakkaniyet,denge
+barış|hiperonim:durum,sosyal durum|hiponim:dünya barışı,iç barış|meronim:huzur,güvenlik,uyum
+bilgelik|hiperonim:zihinsel özellik|hiponim:deneyim bilgeliği,kitabi bilgelik|meronim:bilgi,tecrübe,sezgi
+cesaret|hiperonim:karakter özelliği|hiponim:fiziksel cesaret,moral cesaret|meronim:kararlılık,güç,irade
+kelebek|hiperonim:böcek,haşere|hiponim:monarh kelebek,swallowtail|meronim:kanatlar,antenler,gövde
+karınca|hiperonim:böcek,sosyal böcek|hiponim:işçi karınca,kraliçe karınca|meronim:antenler,bacaklar,karın
+arı|hiperonim:böcek,polen taşıyıcı|hiponim:bal arısı,yaban arısı|meronim:kanatlar,iğne,polen sepeti
+karaca|hiperonim:hayvan,orman hayvanı|hiponim:roe deer,musk deer|meronim:boynuzlar,ayaklar,kuyruk
+tavşan|hiperonim:hayvan,kemirgen|hiponim:ev tavşanı,yaban tavşanı|meronim:kulaklar,patiler,kuyruk
+nane|hiperonim:bitki,aromatik bitki|hiponim:yaban nanesi,su nanesi|meronim:yapraklar,kök,aroma
+lavanta|hiperonim:bitki,aromatik bitki|hiponim:français lavanta,spanish lavanta|meronim:çiçekler,yapraklar,kök
+badem ağacı|hiperonim:ağaç,meyve ağacı|hiponim:acı badem,tatlı badem|meronim:dallar,çiçekler,meyveler
+zeytin ağacı|hiperonim:ağaç,meyve ağacı|hiponim:yeşil zeytin,siyah zeytin|meronim:dallar,yapraklar,meyveler
+bal|hiperonim:gıda,doğal tatlandırıcı|hiponim:çiçek balı,çam balı|meronim:glukoz,fruktoz,enzim
+peynir|hiperonim:süt ürünü,fermente gıda|hiponim:beyaz peynir,kaşar peynir|meronim:protein,yağ,tuz
+yumurta|hiperonim:gıda,hayvan ürünü|hiponim:tavuk yumurtası,bıldırcın yumurtası|meronim:sarısı,beyazı,kabuk
+zeytinyağı|hiperonim:yağ,bitkisel yağ|hiponim:sızma zeytinyağı,riviera|meronim:oleik asit,vitamin e,antioksidan
+ütü|hiperonim:ev aleti,bakım aleti|hiponim:buharlı ütü,kuru ütü|meronim:taban,tutamaç,kablo
+süpürge|hiperonim:ev aleti,temizlik aleti|hiponim:elektrik süpürgesi,manuel süpürge|meronim:fırça,sap,torba
+blender|hiperonim:mutfak aleti,karıştırma aleti|hiponim:el blenderi,masa üstü blender|meronim:bıçaklar,motor,kap
+tost makinesi|hiperonim:mutfak aleti,pişirme aleti|hiponim:ızgara tost,sandviç tost|meronim:plakalar,termostaat,kablo
+roman|hiperonim:edebiyat,yazılı eser|hiponim:polisiye roman,aşk romanı|meronim:bölümler,karakterler,olay örgüsü
+şiir|hiperonim:edebiyat,yazılı eser|hiponim:gazel,free verse|meronim:dizeler,kafiye,ritim
+opera|hiperonim:müzik,sahne sanatı|hiponim:komik opera,ciddi opera|meronim:aryalar,orkestra,sahne
+balet|hiperonim:dans,klasik sanat|hiponim:klasik balet,modern balet|meronim:adımlar,müzik,kostüm
+yüzme|hiperonim:spor,su sporu|hiponim:serbest stil,kelebek stili|meronim:nefes alma,kol hareketi,bacak hareketi
+koşu|hiperonim:spor,atletizm|hiponim:sprint,maraton|meronim:tempo,nefes,adım
+jimnastik|hiperonim:spor,estetik spor|hiponim:artistik jimnastik,ritmik jimnastik|meronim:denge,esneklik,kuvvet
+futbol|hiperonim:spor,takım sporu|hiponim:11'li futbol,salon futbolu|meronim:kale,top,saha
+matematik|hiperonim:ders,sayısal ders|hiponim:cebir,geometri,analiz|meronim:sayılar,formüller,teoremler
+tarih|hiperonim:ders,sosyal bilim|hiponim:yakın tarih,antik tarih|meronim:olaylar,tarihler,şahıslar
+coğrafya|hiperonim:ders,sosyal bilim|hiponim:fiziki coğrafya,beşeri coğrafya|meronim:haritalar,iklim,nüfus
+kimya|hiperonim:ders,fen bilimi|hiponim:organik kimya,inorganik kimya|meronim:elementler,bileşikler,reaksiyonlar
+kalp atışı|hiperonim:yaşam belirtisi,fizyolojik süreç|hiponim:dinlenik nabız,egzersiz nabzı|meronim:kalp ritmi,kan basıncı,oksijen
+nefes alma|hiperonim:yaşam belirtisi,fizyolojik süreç|hiponim:derin nefes,yüzeysel nefes|meronim:soluk verme,soluk alma,oksijen
+vitamin|hiperonim:besin takviyesi,sağlık ürünü|hiponim:vitamin c,vitamin d|meronim:moleküller,enzimler,mineral
+konuşma|hiperonim:iletişim,sözel iletişim|hiponim:formal konuşma,günlük konuşma|meronim:ses,kelimeler,ton
+yazma|hiperonim:iletişim,yazılı iletişim|hiponim:el yazısı,dijital yazma|meronim:harfler,kelimeler,cümleler
+dinleme|hiperonim:iletişim,alıcı iletişim|hiponim:aktif dinleme,pasif dinleme|meronim:kulak,dikkat,anlayış
+otel|hiperonim:konaklama,hizmet sektörü|hiponim:butik otel,resort otel|meronim:odalar,resepsiyon,restoran
+havaalanı|hiperonim:ulaşım merkezi,hava terminali|hiponim:iç hatlar,dış hatlar|meronim:pist,terminal,kontrol kulesi
+pasaport|hiperonim:resmi belge,kimlik belgesi|hiponim:diplomat pasaport,turist pasaport|meronim:foto,vize,damga
+sıcaklık|hiperonim:hava durumu,fiziksel özellik|hiponim:yüksek sıcaklık,düşük sıcaklık|meronim:derece,termometre,hava
+nem|hiperonim:hava durumu,atmosfer özelliği|hiponim:yüksek nem,düşük nem|meronim:su buharı,yoğunlaşma,hava
+basınç|hiperonim:hava durumu,atmosfer özelliği|hiponim:yüksek basınç,düşük basınç|meronim:hava kütlesi,yoğunluk,ağırlık

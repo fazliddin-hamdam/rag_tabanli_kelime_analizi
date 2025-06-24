@@ -20,6 +20,11 @@ body {
     margin: 0 auto;
 }
 
+/* 3 model için container'ı genişlet */
+.container.wide-layout {
+    max-width: 1600px;
+}
+
 /* Header Bölümü */
 .header {
     text-align: center;
@@ -394,6 +399,38 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+/* Cache Indicator */
+.cache-indicator {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(23,162,184,0.3);
+    animation: slideInFromTop 0.3s ease-out;
+}
+
+.cache-indicator small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 0;
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Multi-Model Sonuçlar */
 .search-summary {
     text-align: center;
@@ -419,6 +456,38 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 25px;
     margin-top: 20px;
+}
+
+/* 3 model seçildiğinde yan yana layout - sadece desktop */
+@media (min-width: 1200px) {
+    .model-results-grid.three-models {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    .model-results-grid.three-models .model-results-column {
+        min-width: 0; /* Flexbox overflow fix */
+    }
+    
+    .model-results-grid.three-models .model-results-list {
+        max-height: 450px; /* Biraz daha kısa yap 3 sütun için */
+    }
+    
+    .model-results-grid.three-models .model-header h4 {
+        font-size: 16px; /* Daha küçük başlık 3 sütun için */
+    }
+    
+    .model-results-grid.three-models .model-details {
+        font-size: 11px;
+    }
+}
+
+/* Orta ekranlar için 2 sütun layout */
+@media (min-width: 900px) and (max-width: 1199px) {
+    .model-results-grid.three-models {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
 }
 
 .model-results-column {
@@ -721,6 +790,12 @@ body {
     }
 
     .model-results-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    /* 3 model için tablet view */
+    .model-results-grid.three-models {
         grid-template-columns: 1fr;
         gap: 15px;
     }
